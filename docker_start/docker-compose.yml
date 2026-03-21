@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  jupyter-spark:
+    image: jupyter/pyspark-notebook:latest
+    container_name: jupyter-spark
+    ports:
+      - "8888:8888"
+    volumes:
+      - ../spark_utils/notebooks:/home/jovyan/work
+    environment:
+      - JUPYTER_ENABLE_LAB=yes
+      - JUPYTER_TOKEN=123
+    command: start.sh jupyter lab
