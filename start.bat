@@ -6,7 +6,7 @@ echo ========================================
 echo.
 
 :: Установка переменных для текущей сессии
-set HADOOP_HOME=D:\deals\hadoop
+set HADOOP_HOME=C:\deals\hadoop
 set JAVA_HOME=C:\Program Files\Eclipse Adoptium\jdk-8.0.482.8-hotspot
 set PYSPARK_PYTHON=C:\Python310\python.exe
 set PYSPARK_DRIVER_PYTHON=C:\Python310\python.exe
@@ -56,7 +56,7 @@ echo.
 where jupyter >nul 2>nul
 if %errorlevel% equ 0 (
     echo ✅ Jupyter найден, запускаем...
-    cd /d D:\deals\pyspark_utils
+    cd /d C:\deals\pyspark_utils
     jupyter notebook
 ) else (
     echo ❌ Jupyter не найден. Устанавливаем...

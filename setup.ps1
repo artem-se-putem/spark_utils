@@ -55,7 +55,7 @@ Write-Host "`n[3/6] Создание Jupyter ядра..." -ForegroundColor Cyan
 
 # 4. Проверка Hadoop
 Write-Host "`n[4/6] Проверка Hadoop..." -ForegroundColor Cyan
-$hadoopPath = "D:\deals\hadoop\bin"
+$hadoopPath = "C:\deals\hadoop\bin"
 if (Test-Path "$hadoopPath\winutils.exe") {
     Write-Host "   ✅ Hadoop файлы найдены" -ForegroundColor Green
 } else {
@@ -76,10 +76,10 @@ if (Test-Path "$hadoopPath\winutils.exe") {
 # 5. Создание структуры
 Write-Host "`n[5/6] Создание структуры проекта..." -ForegroundColor Cyan
 $folders = @(
-    "D:\tmp", "D:\tmp\spark-warehouse", "D:\tmp\metastore",
-    "D:\deals\pyspark_utils\notebooks",
-    "D:\deals\pyspark_utils\data",
-    "D:\deals\pyspark_utils\scripts"
+    "C:\tmp", "C:\tmp\spark-warehouse", "C:\tmp\metastore",
+    "C:\deals\pyspark_utils\notebooks",
+    "C:\deals\pyspark_utils\data",
+    "C:\deals\pyspark_utils\scripts"
 )
 
 foreach ($folder in $folders) {
@@ -90,7 +90,7 @@ Write-Host "   ✅ Структура создана" -ForegroundColor Green
 # 6. Настройка переменных окружения
 Write-Host "`n[6/6] Настройка переменных окружения..." -ForegroundColor Cyan
 
-[Environment]::SetEnvironmentVariable("HADOOP_HOME", "D:\deals\hadoop", "Machine")
+[Environment]::SetEnvironmentVariable("HADOOP_HOME", "C:\deals\hadoop", "Machine")
 [Environment]::SetEnvironmentVariable("PYSPARK_PYTHON", "C:\Python310\python.exe", "Machine")
 [Environment]::SetEnvironmentVariable("PYSPARK_DRIVER_PYTHON", "C:\Python310\python.exe", "Machine")
 
@@ -104,7 +104,7 @@ Write-Host "========================================" -ForegroundColor Green
 Write-Host ""
 Write-Host "Для запуска проекта:" -ForegroundColor Cyan
 Write-Host "1. Перезагрузите компьютер"
-Write-Host "2. Запустите D:\deals\pyspark_utils\run_test.bat"
+Write-Host "2. Запустите C:\deals\pyspark_utils\run_test.bat"
 Write-Host "3. Или откройте VS Code и выберите Python 3.10"
 Write-Host ""
 
