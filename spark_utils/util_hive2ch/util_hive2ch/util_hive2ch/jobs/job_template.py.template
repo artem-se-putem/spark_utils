@@ -1,0 +1,9 @@
+from pyspark.sql import DataFrame
+from pyspark.sql.functions import *
+
+def transform_data(main_df: DataFrame, sc) -> DataFrame:
+    # Имя функции в джобе должно быть "transform_data". Функция должна возвращать датафрейм.
+    # Если нужен sql: transformed_df = sc.sql('''select * from table ''')
+
+    transformed_df = main_df.select("*")
+    return transformed_df

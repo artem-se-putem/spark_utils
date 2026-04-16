@@ -1,0 +1,2212 @@
+=== build_creds.sh.txt ===
+#!/bin/bash
+
+SCRIPT=$(realpath "$0")
+SCRIPTPATH=$(dirname "$SCRIPT")
+
+export OMEGA_USERNAME="'${1}'"
+export OMEGA_PASSWORD="'${2}'"
+export CH_HOST=${3}
+export CH_PORT=${4}
+envsubst < ${SCRIPTPATH}/creds_template.py.template > ${SCRIPTPATH}/creds.py
+=== build_dag.sh.txt ===
+#!/bin/bash
+
+SCRIPT=$(realpath "$0")
+SCRIPTPATH=$(dirname "$SCRIPT")
+
+export hdfs_app_path=${1}
+export hdfs_person_path=${2}
+export owner=${3}
+export dag_id=${4}
+export start_date_dag=${5}
+export schedule_interval=${6}
+export dagrun_timeout=${7}
+export tags=${8}
+export max_active_runs=${9}
+export catchup=${10}
+export task_id=${11}
+export increment=${12}
+export save_interval=${13}
+export start_date=${14}
+export end_date=${15}
+export job_name=${16}
+export schema_ch=${17}
+export distributed_table=${18}
+export replicated_table=${19}
+export schema_hive=${20}
+export hive_table=${21}
+export sharding_key_ch=${22}
+export cluster=${23}
+export python_exe_path=${24}
+export spark_yarn_queue=${25}
+export spark_driver_cores=${26}
+export spark_driver_memory=${27}
+export spark_executor_cores=${28}
+export spark_executor_memory=${29}
+export spark_instances=${30}
+export spark_executor_memory_overhead=${31}
+export spark_driver_memory_overhead=${32}
+
+echo "Заполняем шаблон ${SCRIPTPATH}/dag_template.py.template"
+
+${PYTHON_EXE_PATH} ${SCRIPTPATH}/generate_dag.py \
+--hdfs_app_path "${hdfs_app_path}" \
+--hdfs_person_path "${hdfs_person_path}" \
+--owner "${owner}" \
+--dag_id "${dag_id}" \
+--start_date_dag "${start_date_dag}" \
+--schedule_interval "${schedule_interval}" \
+--dagrun_timeout "${dagrun_timeout}" \
+--tags "${tags}" \
+--max_active_runs "${max_active_runs}" \
+--catchup "${catchup}" \
+--task_id "${task_id}" \
+--increment "${increment}" \
+--save_interval "${save_interval}" \
+--start_date "${start_date}" \
+--end_date "${end_date}" \
+--job_name "${job_name}" \
+--schema_ch "${schema_ch}" \
+--distributed_table "${distributed_table}" \
+--replicated_table "${replicated_table}" \
+--schema_hive "${schema_hive}" \
+--hive_table "${hive_table}" \
+--sharding_key_ch "${sharding_key_ch}" \
+--cluster "${cluster}" \
+--python_exe_path "${python_exe_path}" \
+--spark_yarn_queue "${spark_yarn_queue}" \
+--spark_driver_cores "${spark_driver_cores}" \
+--spark_driver_memory "${spark_driver_memory}" \
+--spark_executor_cores "${spark_executor_cores}" \
+--spark_executor_memory "${spark_executor_memory}" \
+--spark_instances "${spark_instances}" \
+--spark_executor_memory_overhead "${spark_executor_memory_overhead}" \
+--spark_driver_memory_overhead "${spark_driver_memory_overhead}"
+=== build_generate_ddl.sh.txt ===
+#!/bin/bash
+
+SCRIPT=$(realpath "$0")
+SCRIPTPATH=$(dirname "$SCRIPT")
+
+export IPA_USERNAME=${1}
+export KEYTAB_PATH=${2}
+export SPARK_YARN_QUEUE=${3}
+export PYTHON_EXE_PATH=${4}
+export SPARK_INSTANCES=${5}
+export SPARK_EXECUTOR_CORES=${6}
+export SPARK_EXECUTOR_MEMORY=${7}
+export SPARK_EXECUTOR_MEMORY_OVERHEAD=${8}
+export SPARK_DRIVER_CORES=${9}
+export SPARK_DRIVER_MEMORY=${10}
+export SPARK_DRIVER_MEMORY_OVERHEAD=${11}
+export GENERATE_DDL_ARGS_APP=${12}
+export LOG4J_CFG=${13}
+export SPARK_APP_NAME=${14}
+envsubst < ${SCRIPTPATH}/generate_ddl.sh.template > ${SCRIPTPATH}/generate_ddl.sh
+=== build_job.sh.txt ===
+#!/bin/bash
+
+SCRIPT=$(realpath "$0")
+SCRIPTPATH=$(dirname "$SCRIPT")
+
+export job_name=${1}
+
+envsubst < ${SCRIPTPATH}/job_template.py.template > ${SCRIPTPATH}/${job_name}.py
+=== build_local_start.sh.txt ===
+#!/bin/bash
+
+SCRIPT=$(realpath "$0")
+SCRIPTPATH=$(dirname "$SCRIPT")
+
+rm ${SCRIPTPATH}/local_start.sh
+
+export IPA_USERNAME=${1}
+export KEYTAB_PATH=${2}
+export SPARK_YARN_QUEUE=${3}
+export PYTHON_EXE_PATH=${4}
+export SPARK_INSTANCES=${5}
+export SPARK_EXECUTOR_CORES=${6}
+export SPARK_EXECUTOR_MEMORY=${7}
+export SPARK_EXECUTOR_MEMORY_OVERHEAD=${8}
+export SPARK_DRIVER_CORES=${9}
+export SPARK_DRIVER_MEMORY=${10}
+export SPARK_DRIVER_MEMORY_OVERHEAD=${11}
+export ARGS=${12}
+export LOG4J_CFG=${13}
+export SPARK_APP_NAME=${14}
+export PYTHON_PATH=${15}
+envsubst < ${SCRIPTPATH}/local_start.sh.template > ${SCRIPTPATH}/local_start.sh
+=== build_oozie_start.sh.txt ===
+#!/bin/bash
+
+SCRIPT=$(realpath	"$0")
+SCRIPTPATH=$(dirname	"$SCRIPT")
+
+export	IPA_USERNAME=${1}
+export	KEYTAB_PATH=${2}
+export	SPARK_YARN_QUEUE=${3}
+export	PYTHON_EXE_PATH=${4}
+export	SPARK_INSTANCES=${5}
+export	SPARK_EXECUTOR_CORES=${6}
+export	SPARK_EXECUTOR_MEMORY=${7}
+export	SPARK_EXECUTOR_MEMORY_OVERHEAD=${8}
+export	SPARK_DRIVER_CORES=${9}
+export	SPARK_DRIVER_MEMORY=${10}
+export	SPARK_DRIVER_MEMORY_OVERHEAD=${11}
+export	LOG4J_CFG=${12}
+export	SPARK_APP_NAME=${13}
+export	PYTHON_PATH=${14}
+envsubst	<	${SCRIPTPATH}/oozie_start.sh.template	>	${SCRIPTPATH}/oozie_start.sh
+=== common.env.template.txt ===
+#   ПОЛЬЗОВАТЕЛЬСКИЕ ПАРАМЕТРЫ
+##  ОБЩИЕ ПАРАМЕТРЫ
+OMEGA_USERNAME='{{OMEGA_USERNAME}}'
+OMEGA_PASSWORD='{{OMEGA_PASSWORD}}'
+IPA_USERNAME='IPA_USERNAME'
+CH_HOST='CH_HOST'
+CH_PORT='CH_PORT'
+
+##  ПАРАМЕТРЫ ПРИЛОЖЕНИЯ
+INCREMENT='2'
+SAVE_INTERVAL='5'
+START_DATE='2025-05-05'
+END_DATE='2025-05-05'
+JOB_NAME='t_cred_portf_metric_mon_appl_tmp2_load_test'
+CH_SCHEMA='rrb_ext'
+CH_DISTRIBUTED_TABLE='t_cred_portf_metric_mon_appl_tmp2_load_test'
+CH_MERGETREE_TABLE='t_cred_portf_metric_mon_appl_tmp2_mergetree_load_test'
+CH_PARTITION_BY_FIELD='gregor_dt'
+CH_CLUSTER='sh8_r1'
+HIVE_SCHEMA='t_team_cpu_reporting_rrm'
+HIVE_TABLE='inflow_sverk_7'
+
+##  ПАРАМЕТРЫ SPARK SESSION
+SPARK_YARN_QUEUE='team_rdwh_reserv'
+SPARK_APP_NAME='hive2ch.{START_DTTM}'
+SPARK_INSTANCES='10'
+SPARK_EXECUTOR_CORES='4'
+SPARK_EXECUTOR_MEMORY='16g'
+SPARK_EXECUTOR_MEMORY_OVERHEAD='4g'
+SPARK_DRIVER_CORES='4'
+SPARK_DRIVER_MEMORY='20g'
+SPARK_DRIVER_MEMORY_OVERHEAD='5g'
+
+
+#   AIRFLOW
+##  Заполнять эти переменные, если джобы будут на рассписании в airflow
+HDFS_APP_AIRFLOW_DIR='hdfs://arnsdpldbr2/user/team/team_transformation_analytical/oozie-app'
+LINUX_PROJECT_AIRFLOW_PATH='~/oozie-app/oozie-app/util_hive2ch'
+##  Параметры дага
+DAG_ID='wf_rdwh_hive_to_ch__template_dag'
+START_DATE_DAG='datetime(2023, 1, 1)'
+SCHEDULE_INTERVAL='None'
+DAGRUN_TIMEOUT='timedelta(minutes=60)'
+TAGS='["ipa_username", "template_dag"]'
+MAX_ACTIVE_RUNS='1'
+CATCHUP='False'
+TASK_ID='load_hive_to_ch_t_cred_portf_metric_mon_appl_tmp2_load_test'
+
+
+#   OOZIE
+##  Заполнять эти переменные, если джобы будут на рассписании в oozie
+HDFS_APP_OOZIE_DIR='hdfs://arnsdpldbr2/user/team/team_transformation_analytical/oozie-app'
+LINUX_PROJECT_OOZIE_PATH='~/oozie-app/oozie-app/util_hive2ch'
+
+
+#   [НЕ МЕНЯТЬ] ТЕХНИЧЕСКИЕ ПЕРЕМЕННЫЕ
+##  [НЕ МЕНЯТЬ] ГЛОБАЛЬНЫЕ ПАРАМЕТРЫ
+PYTHONPATH='${PYTHONPATH}'
+=== common.env.txt ===
+#   ПОЛЬЗОВАТЕЛЬСКИЕ ПАРАМЕТРЫ
+##  ОБЩИЕ ПАРАМЕТРЫ
+OMEGA_USERNAME='22343006'
+OMEGA_PASSWORD=''
+IPA_USERNAME='22343006_omega-sbrf-ru'
+CH_HOST='pvlos-labcl0003.cloud.df.sbrf.ru'
+CH_PORT='8443'
+
+##  ПАРАМЕТРЫ ПРИЛОЖЕНИЯ
+INCREMENT='2'
+SAVE_INTERVAL='0'
+START_DATE='2025-01-01'
+END_DATE='2026-03-01'
+JOB_NAME='t_cred_portf_metric_mon'
+CH_SCHEMA='rrb_ext'
+CH_DISTRIBUTED_TABLE='stg_t_cred_portf_metric_mon'
+CH_MERGETREE_TABLE='stg_t_cred_portf_metric_mon_rrmt'
+CH_PARTITION_BY_FIELD='gregor_dt'
+CH_CLUSTER='sh4_r4'
+HIVE_SCHEMA='arnsdprisk__custom_risk_np_reporting'
+HIVE_TABLE='t_cred_portf_metric_mon'
+
+##  ПАРАМЕТРЫ SPARK SESSION
+SPARK_YARN_QUEUE='team_rdwh_reserv'
+SPARK_APP_NAME='hive2ch.{START_DTTM}'
+SPARK_INSTANCES='5'
+SPARK_EXECUTOR_CORES='2'
+SPARK_EXECUTOR_MEMORY='40g'
+SPARK_EXECUTOR_MEMORY_OVERHEAD='4g'
+SPARK_DRIVER_CORES='8'
+SPARK_DRIVER_MEMORY='20g'
+SPARK_DRIVER_MEMORY_OVERHEAD='4g'
+
+
+#   AIRFLOW
+##  Заполнять эти переменные, если джобы будут на рассписании в airflow
+HDFS_APP_AIRFLOW_DIR='hdfs://arnsdpldbr2/user/team/team_transformation_analytical/oozie-app'
+LINUX_PROJECT_AIRFLOW_PATH='~/ld-sdp-etl/util_hive2ch'
+##  Параметры дага
+DAG_ID='wf_rdwh_hive2ch__stg_t_cred_portf_metric_mon'
+START_DATE_DAG='datetime(2025, 5, 5)'
+SCHEDULE_INTERVAL='40 7 * * *'
+DAGRUN_TIMEOUT='timedelta(minutes=300)'
+TAGS='["22343006_omega-sbrf-ru", "hive2ch", "stg_t_cred_portf_metric_mon"]'
+MAX_ACTIVE_RUNS='1'
+CATCHUP='False'
+TASK_ID='load_hive2ch_stg_t_cred_portf_metric_mon'
+
+
+#   OOZIE
+##  Заполнять эти переменные, если джобы будут на рассписании в oozie
+HDFS_APP_OOZIE_DIR='hdfs://arnsdpldbr2/user/team/team_transformation_analytical/oozie-app'
+LINUX_PROJECT_OOZIE_PATH='~/oozie-app/oozie-app/util_hive2ch'
+
+
+#   [НЕ МЕНЯТЬ] ТЕХНИЧЕСКИЕ ПЕРЕМЕННЫЕ
+##  [НЕ МЕНЯТЬ] ГЛОБАЛЬНЫЕ ПАРАМЕТРЫ
+PYTHONPATH='${PYTHONPATH}'
+=== common.sh.txt ===
+function _InitVariables {
+	export GENERATE_DDL_ARGS_APP="--schema_ch ${CH_SCHEMA} \\
+--distributed_table ${CH_DISTRIBUTED_TABLE} \\
+--replicated_table ${CH_MERGETREE_TABLE} \\
+--schema_hive ${HIVE_SCHEMA} \\
+--hive_table ${HIVE_TABLE} \\
+--sharding_key_ch ${CH_PARTITION_BY_FIELD} \\
+--cluster ${CH_CLUSTER}"
+
+if [[ "${INCREMENT}" -eq 0 ]]; then
+		export LOCAL_ARGS_APP="--job_name ${JOB_NAME} \\
+--increment ${INCREMENT} \\
+--schema_ch ${CH_SCHEMA} \\
+--distributed_table ${CH_DISTRIBUTED_TABLE} \\
+--replicated_table ${CH_MERGETREE_TABLE} \\
+--schema_hive ${HIVE_SCHEMA} \\
+--hive_table ${HIVE_TABLE} \\
+--sharding_key_ch ${CH_PARTITION_BY_FIELD} \\
+--cluster ${CH_CLUSTER}"
+	elif [[ "${INCREMENT}" -eq 1 ]]; then
+		export LOCAL_ARGS_APP="--job_name ${JOB_NAME} \\
+--increment ${INCREMENT} \\
+--save_interval ${SAVE_INTERVAL} \\
+--schema_ch ${CH_SCHEMA} \\
+--distributed_table ${CH_DISTRIBUTED_TABLE} \\
+--replicated_table ${CH_MERGETREE_TABLE} \\
+--schema_hive ${HIVE_SCHEMA} \\
+--hive_table ${HIVE_TABLE} \\
+--sharding_key_ch ${CH_PARTITION_BY_FIELD} \\
+--cluster ${CH_CLUSTER}"
+	elif [[ "${INCREMENT}" -eq 2 ]] || [[ "${INCREMENT}" -eq 3 ]]; then
+		export LOCAL_ARGS_APP="--job_name ${JOB_NAME} \\
+--increment ${INCREMENT} \\
+--start_date ${START_DATE} \\
+--end_date ${END_DATE} \\
+--schema_ch ${CH_SCHEMA} \\
+--distributed_table ${CH_DISTRIBUTED_TABLE} \\
+--replicated_table ${CH_MERGETREE_TABLE} \\
+--schema_hive ${HIVE_SCHEMA} \\
+--hive_table ${HIVE_TABLE} \\
+--sharding_key_ch ${CH_PARTITION_BY_FIELD} \\
+--cluster ${CH_CLUSTER}"
+	fi
+}
+
+function ReadEnvFile {
+	while IFS= read -r line; do
+		[[ -z "$line" || $line =~ ^# ]] && continue
+		eval "export $line"
+	done < "./common.env"
+
+	envsubst <./tech.env.template>./tech.env
+
+	while IFS= read -r line; do
+		[[ -z "$line" || $line =~ ^# ]] && continue
+		eval "export $line"
+	done < "./tech.env"
+
+	_InitVariables
+}
+ReadEnvFile
+
+function keytab_init {
+	/usr/sbin/ipa-getkeytab -P -p ${IPA_USERNAME}\@DF.SBRF.RU -k ~/${IPA_USERNAME}\.keytab ${IPA_USERNAME}
+	kinit ${IPA_USERNAME}@DF.SBRF.RU -k -t /home/${IPA_USERNAME}/${IPA_USERNAME}.keytab
+	mv ~/${IPA_USERNAME}.keytab ~/.auth/${IPA_USERNAME}.keytab
+}
+
+function LocalStartBuild {
+	bash "${ROOT_PATH}"/build_local_start.sh "${IPA_USERNAME}" "${LINUX_LOCAL_PATH_KEYTAB}" "${SPARK_YARN_QUEUE}" "${PYTHON_EXE_PATH}" "${SPARK_INSTANCES}" "${SPARK_EXECUTOR_CORES}" "${SPARK_EXECUTOR_MEMORY}" "${SPARK_EXECUTOR_MEMORY_OVERHEAD}" "${SPARK_DRIVER_CORES}" "${SPARK_DRIVER_MEMORY}" "${SPARK_DRIVER_MEMORY_OVERHEAD}" "${LOCAL_ARGS_APP}" ${LOG4J_CFG} "${SPARK_APP_NAME}"
+}
+
+function OozieStartBuild {
+	bash	"${ROOT_PATH}"/build_oozie_start.sh	"${IPA_USERNAME}"	"${OOZIE_CONTAINER_PATH_KEYTAB}"	"${SPARK_YARN_QUEUE}"	"${PYTHON_EXE_PATH}"	"${SPARK_INSTANCES}"	"${SPARK_EXECUTOR_CORES}"	"${SPARK_EXECUTOR_MEMORY}"	"${SPARK_EXECUTOR_MEMORY_OVERHEAD}"	"${SPARK_DRIVER_CORES}"	"${SPARK_DRIVER_MEMORY}"	"${SPARK_DRIVER_MEMORY_OVERHEAD}"	"${LOG4J_CFG}"	"${SPARK_APP_NAME}"
+}
+
+function CredsBuild {
+	bash "${ROOT_PATH}"/build_creds.sh "${OMEGA_USERNAME}" "${OMEGA_PASSWORD}" "${CH_HOST}" "${CH_PORT}"
+}
+
+function GenerateDDLBuild {
+	bash "${ROOT_PATH}"/toolbox/build_generate_ddl.sh "${USER}" "${LINUX_LOCAL_PATH_KEYTAB}" "${SPARK_YARN_QUEUE}" "${PYTHON_EXE_PATH}" "${SPARK_INSTANCES}" "${SPARK_EXECUTOR_CORES}" "${SPARK_EXECUTOR_MEMORY}" "${SPARK_EXECUTOR_MEMORY_OVERHEAD}" "${SPARK_DRIVER_CORES}" "${SPARK_DRIVER_MEMORY}" "${SPARK_DRIVER_MEMORY_OVERHEAD}" "${GENERATE_DDL_ARGS_APP}" "${LOG4J_CFG}" "${SPARK_APP_NAME}"
+	bash toolbox/generate_ddl.sh
+}
+
+function JobBuild {
+	bash "${ROOT_PATH}"/jobs/build_job.sh "${JOB_NAME}"
+}
+
+function DagBuild {
+	bash "${ROOT_PATH}"/dags/build_dag.sh "${HDFS_APP_AIRFLOW_PATH}" "${HDFS_PERSON_PATH}" "${IPA_USERNAME}" "${DAG_ID}" "${START_DATE_DAG}" "${SCHEDULE_INTERVAL}" ${DAGRUN_TIMEOUT} "${TAGS}" "${MAX_ACTIVE_RUNS}" "${CATCHUP}" "${TASK_ID}" "${INCREMENT}" "${SAVE_INTERVAL}" "${START_DATE}" "${END_DATE}" "${JOB_NAME}" "${CH_SCHEMA}" "${CH_DISTRIBUTED_TABLE}" "${CH_MERGETREE_TABLE}" "${HIVE_SCHEMA}" "${HIVE_TABLE}" "${CH_PARTITION_BY_FIELD}" "${CH_CLUSTER}" "${PYTHON_EXE_PATH}" "${SPARK_YARN_QUEUE}" "${SPARK_DRIVER_CORES}" "${SPARK_DRIVER_MEMORY}" "${SPARK_EXECUTOR_CORES}" "${SPARK_EXECUTOR_MEMORY}" "${SPARK_INSTANCES}" "${SPARK_EXECUTOR_MEMORY_OVERHEAD}" "${SPARK_DRIVER_MEMORY_OVERHEAD}"
+}
+
+function KeytabLoad {
+  set -x
+  eval "hdfs dfs -copyFromLocal -f /home/${IPA_USERNAME}/.auth/${IPA_USERNAME}.keytab ${HDFS_PERSON_PATH}/.auth"
+  set +x
+}
+
+function CredsLoad {
+  set -x
+	eval "hdfs dfs -copyFromLocal -f ${LINUX_PROJECT_OOZIE_PATH}/creds.py ${HDFS_PERSON_PATH}/.auth"
+	set +x
+}
+
+function JobsLoad {
+  set -x
+  eval "zip -r jobs.zip jobs"
+  eval "hdfs dfs -copyFromLocal -f	${LINUX_PROJECT_AIRFLOW_PATH}/jobs.zip ${HDFS_APP_AIRFLOW_PATH}"
+  set +x
+}
+
+function ProjectLoadAirflow {
+  # eval нужен для правильной интерпретации путей в одинарных кавычках
+  set -x
+	eval "hdfs dfs -mkdir -p ${HDFS_PERSON_PATH}/.auth"
+	eval "hdfs dfs -mkdir -p ${HDFS_APP_AIRFLOW_PATH}"
+	eval "zip -r src.zip src"
+	eval "zip -r jobs.zip jobs"
+	eval "hdfs dfs -copyFromLocal -f /home/${IPA_USERNAME}/.auth/${IPA_USERNAME}.keytab ${HDFS_PERSON_PATH}/.auth"
+	eval "hdfs dfs -copyFromLocal -f ${LINUX_PROJECT_AIRFLOW_PATH}/src.zip ${HDFS_APP_AIRFLOW_PATH}"
+	eval "hdfs dfs -copyFromLocal -f ${LINUX_PROJECT_AIRFLOW_PATH}/clickhouse-jdbc-0.3.2-patch11-all.jar ${HDFS_APP_AIRFLOW_PATH}"
+	eval "hdfs dfs -copyFromLocal -f ${LINUX_PROJECT_AIRFLOW_PATH}/main.py ${HDFS_APP_AIRFLOW_PATH}"
+	eval "hdfs dfs -copyFromLocal -f ${LINUX_PROJECT_AIRFLOW_PATH}/creds.py ${HDFS_PERSON_PATH}/.auth"
+	eval "hdfs dfs -copyFromLocal -f	${LINUX_PROJECT_AIRFLOW_PATH}/jobs.zip ${HDFS_APP_AIRFLOW_PATH}"
+	set +x
+}
+
+function ProjectLoadOozie {
+  set -x
+	eval "hdfs dfs -mkdir -p ${HDFS_PERSON_PATH}/.auth"
+	eval "hdfs dfs -mkdir -p ${HDFS_APP_OOZIE_PATH}"
+	eval "hdfs dfs -mkdir -p ${HDFS_APP_OOZIE_PATH}/jobs"
+	eval "hdfs dfs -mkdir -p ${HDFS_APP_OOZIE_PATH}/src"
+	eval "hdfs dfs -mkdir -p ${HDFS_APP_OOZIE_PATH}/workflow"
+	eval "hdfs dfs -copyFromLocal -f /home/${IPA_USERNAME}/.auth/${IPA_USERNAME}.keytab ${HDFS_PERSON_PATH}/.auth"
+	eval "hdfs dfs -copyFromLocal -f ${LINUX_PROJECT_OOZIE_PATH}/src/* ${HDFS_APP_OOZIE_PATH}/src"
+	eval "hdfs dfs -copyFromLocal -f ${LINUX_PROJECT_OOZIE_PATH}/jobs/* ${HDFS_APP_OOZIE_PATH}/jobs"
+	eval "hdfs dfs -copyFromLocal -f ${LINUX_PROJECT_OOZIE_PATH}/clickhouse-jdbc-0.3.2-patch11-all.jar ${HDFS_APP_OOZIE_PATH}"
+	eval "hdfs dfs -copyFromLocal -f ${LINUX_PROJECT_OOZIE_PATH}/main.py ${HDFS_APP_OOZIE_PATH}"
+	eval "hdfs dfs -copyFromLocal -f ${LINUX_PROJECT_OOZIE_PATH}/creds.py ${HDFS_PERSON_PATH}/.auth"
+	eval "hdfs dfs -copyFromLocal -f  ${LINUX_PROJECT_OOZIE_PATH}/oozie_start.sh ${HDFS_APP_OOZIE_PATH}"
+	eval "hdfs dfs -copyFromLocal -f  ${LINUX_PROJECT_OOZIE_PATH}/workflow/* ${HDFS_APP_OOZIE_PATH}/workflow"
+	eval "hdfs dfs -copyFromLocal -f  ${LINUX_PROJECT_OOZIE_PATH}/log4j.properties ${HDFS_APP_OOZIE_PATH}"
+	set +x
+}
+=== creds.py.txt ===
+CH_USERNAME='22343006'
+CH_PASSWORD=''
+CH_DRIVER="com.clickhouse.jdbc.ClickHouseDriver"
+CH_HOST="pvlos-labcl0003.cloud.df.sbrf.ru"
+CH_PORT="8443"
+CH_PROTOCOL="jdbc"
+CH_SECURE="https"
+CH_SOCKET_TIMEOUT="600000"
+
+=== creds_template.py.template.txt ===
+CH_USERNAME=${OMEGA_USERNAME}
+CH_PASSWORD=${OMEGA_PASSWORD}
+CH_DRIVER="com.clickhouse.jdbc.ClickHouseDriver"
+CH_HOST="${CH_HOST}"
+CH_PORT="${CH_PORT}"
+CH_PROTOCOL="jdbc"
+CH_SECURE="https"
+CH_SOCKET_TIMEOUT="600000"
+
+=== dag_example.py.txt ===
+from datetime import datetime, timedelta
+
+from se.airflow import DAG
+from se.airflow.utils.dates import days_ago
+from se.airflow.operators.empty import EmptyOperator
+from se.airflow.providers.spark import SparkSqlOperatorSE, SparkSubmitOperatorSE
+
+args = {
+    "owner": "22343006_omega-sbrf-ru" # обязательно явно, ipa_username
+}
+
+hdfs_app_path = "hdfs://arnsdpldbr2/user/team/team_transformation_analytical/oozie-app/hive2ch"
+hdfs_person_path = f"hdfs://arnsdpldbr2/user/{args['owner']}"
+
+with DAG(
+    dag_id="wf_rdwh_hive_to_ch__template_dag", # обязательный, под этим названием будет отображаться даг в airflow ui
+    default_args=args, # словарь параметров,которые применяются для каждого оператора в даге
+    start_date=days_ago(1), # обязательный, дата старта при запуске дага, поддерживает datetime
+    schedule_interval=None, # рассписание автозапуска дага, указывать в формате cron-выражения
+    dagrun_timeout=timedelta(minutes=60), # timeout dag run
+    tags=["rdwh", args['owner'], "template_dag"], # ставим rdwh, login_omega и любые другие
+    max_active_runs=1, # максимальное число активных dag run
+    catchup=False, # при старте дага, запускать ли предыдущие НЕуспешные dag runs, начиная от start_date (включительно) до даты запуска дага (невключительно)
+    ) as dag:
+
+    spark_job = SparkSubmitOperatorSE(
+        task_id="load_hive_to_ch_t_cred_portf_metric_mon_appl_tmp2_load_test",
+        application=f"{hdfs_app_path}/main.py", # запускается на драйвере spark приложения
+        application_args=[
+            "--job_name", "t_cred_portf_metric_mon_appl_tmp2_load_test", # имя джобы в папке src/jobs
+            "--increment", "0", # 0 - full, 1 - increment с save_interval, 2 - от start_date до end_date
+            "--schema_ch", "rrb_ext", # схема таблиц в кликхаусе
+            "--distributed_table", "t_cred_portf_metric_mon_appl_tmp2_load_test", # имя шардированной таблицы
+            "--replicated_table", "t_cred_portf_metric_mon_appl_tmp2_mergetree_load_test", # имя таблицы, над которой построена шардированная
+            "--schema_hive", "t_team_cpu_reporting_rrm", # схема таблицы в хайве, из которой грузим
+            "--hive_table", "t_cred_portf_metric_mon_appl_tmp2", # имя таблицы в хайве, из которой грузим
+            "--sharding_key_ch", "gregor_dt", # ключ шардированая в кликхаусе, для удаления по партициям (только одно поле, тип=date)
+            "--cluster", "sh8_r1" # имя кластера в кликхаусе
+        ], # аргументы application
+        py_files=f"{hdfs_person_path}/.auth/creds.py,{hdfs_person_path}/.auth/{args['owner']}.keytab,{hdfs_app_path}/src.zip,{hdfs_app_path}/jobs.zip", # здесь указываем все необходимые файлы (.creds.py и keytab) и zip архив приложения и zip архив с jobs
+        jars=f"{hdfs_app_path}/clickhouse-jdbc-0.3.2-patch11-all.jar", # jar файлы кладем сюда, и указываем их в conf, параметр jars
+        conf={"spark.master": 'yarn', # обязательный
+              "spark.submit.deployMode": 'cluster', # обязательный
+              "spark.yarn.queue": 'team_rdwh_reserv', # обязательный
+              "spark.hadoop.hive.metastore.uris": 'thrift://pplas-ldbr00365.sdpdi.df.sbrf.ru:9083,thrift://pplas-ldbr00366.sdpdi.df.sbrf.ru:9083,thrift://pplas-ldbr00409.sdpdi.df.sbrf.ru:9083,thrift://pplas-ldbr00410.sdpdi.df.sbrf.ru:9083,thrift://pplos-ldbr00323.sdpdi.df.sbrf.ru:9083,thrift://pplos-ldbr00423.sdpdi.df.sbrf.ru:9083,thrift://pplos-ldbr00443.sdpdi.df.sbrf.ru:9083', # обязательный, это адрес MetaStore Hive, без этого параметра не будет видеть MetaStore Hive
+              "spark.pyspark.python": '/opt/sdp/mlpy3811v23/bin/python', # обязательный, путь к интерпретатору питона для executor, иначе будут ошибки с импортами сторонних библиотек
+              "spark.pyspark.driver.python": '/opt/sdp/mlpy3811v23/bin/python', # обязательный, путь к интерпретатору питона для driver, иначе будут ошибки с импортами сторонних библиотек
+              "spark.driver.cores": 8, # кол-во ядер driver, не менять
+              "spark.driver.memory": "20g", # оператива driver, не менять
+              "spark.executor.cores": 10, # кол-во ядер на executor, делаешь больше, если нужна выше скорость (вместе с ним менять и параметры spark.default.parallelism и spark.sql.shuffle.partitions)
+              "spark.executor.memory": "20g", # оператива на executor
+              "spark.executor.instances": 10, # кол-во executor (executor.cores*executor.instances должно быть меньше 40, для дага на постоянной основе, чтобы не мешать другим коллегам, грузить данные, тк общее кол-во ядер на очереди team_rdwh_reserv =1200)
+              "spark.executor.memoryOverhead": "4g", # 20% от executor.memory
+              "spark.driver.memoryOverhead": "4g", # 20% от driver.memory
+              "spark.sql.parquet.binaryAsString": "true", # читать тип binary как string
+              "spark.sql.hive.convertMetastoreParquet": "false", # для совместимости типов данных spark и старых версий hive (иначе timestamp поменяет формат)
+              "spark.shuffle.service.enabled": "true", # всегда должен true, для шафл операций между executors
+              "spark.sql.parquet.readLegacyFormat": "true", # для совместимости с legacy версиями parquet
+              "spark.hadoop.validateOutputSpecs": "false", # чтобы не было ошибок, если перезаписываешь какие то данные
+              "spark.hadoop.mapred.input.dir.recursive": "true", # для чтения партицированных таблиц всегда делаем true
+              "spark.sql.catalogImplementation": "hive", # указывать, если работаешь с hive
+              "spark.hadoop.metastore.skip.load.functions.on.init": "true", # true, если НЕ используешь udf из hive (то есть всегда true)
+              "jars": "clickhouse-jdbc-0.3.2-patch11-all.jar", # jar для работы с clickhouse
+              "spark.yarn.access.hadoopFileSystems": 'hdfs://hdfsgw', # ДЛЯ ЧТЕНИЯ ИЗ ПОДПИСКИ: без этого параметра будет ошибка кербероса
+              "spark.hadoop.yarn.timeline-service.enabled": "false"
+             },
+        verbose=True # True - вывод подробных логов
+    )
+
+    start = EmptyOperator(task_id="start")
+    finish = EmptyOperator(task_id="finish")
+
+    start >> [spark_job, ] >> finish
+
+=== dag_template.py.template.txt ===
+
+from datetime import datetime, timedelta
+
+from se.airflow import DAG
+from se.airflow.utils.dates import days_ago
+from se.airflow.operators.empty import EmptyOperator
+from se.airflow.providers.spark import SparkSqlOperatorSE, SparkSubmitOperatorSE
+
+args = {
+    "owner": "{{owner}}" # обязательно явно, ipa_username
+}
+
+hdfs_app_path = "{{hdfs_app_path}}"
+hdfs_person_path = "{{hdfs_person_path}}"
+
+with DAG(
+    dag_id="{{dag_id}}", # обязательный, под этим названием будет отображаться даг в airflow ui
+    default_args=args, # словарь параметров,которые применяются для каждого оператора в даге
+    start_date={{start_date_dag}}, # обязательный, дата старта при запуске дага, поддерживает datetime
+    schedule_interval={% if "*" in schedule_interval %}"{{schedule_interval}}"{% else %}{{schedule_interval}}{% endif %}, # рассписание автозапуска дага, указывать в формате cron-выражения
+    dagrun_timeout={{dagrun_timeout}}, # timeout dag run
+    tags={{tags}}, # ставим команду, login_omega и любые другие
+    max_active_runs={{max_active_runs}}, # максимальное число активных dag run
+    catchup={{catchup}}, # при старте дага, запускать ли предыдущие НЕуспешные dag runs, начиная от start_date (включительно) до даты запуска дага (невключительно)
+    ) as dag:
+
+    spark_job = SparkSubmitOperatorSE(
+        task_id="{{task_id}}",
+        application=f"{hdfs_app_path}/main.py", # запускается на драйвере spark приложения
+        application_args=[
+            "--job_name", "{{job_name}}", # имя джобы в папке src/job_test
+            # 0 - full, 1 - increment с save_interval, 2 - от start_date до end_date, 3 - от start_date до end_date (без предварительного удаления партиций)
+            {% if increment == '0' %}"--increment", "{{increment}}",
+            {% elif increment == '1' %}"--increment", "{{increment}}",
+            "--save_interval", "{{save_interval}}",
+            {% elif increment in ['2','3'] %}"--increment", "{{increment}}",
+            "--start_date", "{{start_date}}",
+            "--end_date", "{{end_date}}",
+            {% endif %}
+            "--schema_ch", "{{schema_ch}}", # схема таблиц в кликхаусе
+            "--distributed_table", "{{distributed_table}}", # имя шардированной таблицы
+            "--replicated_table", "{{replicated_table}}", # имя таблицы, над которой построена шардированная
+            "--schema_hive", "{{schema_hive}}", # схема таблицы в хайве, из которой грузим
+            "--hive_table", "{{hive_table}}", # имя таблицы в хайве, из которой грузим
+            "--sharding_key_ch", "{{sharding_key_ch}}", # ключ шардированая в кликхаусе, для удаления по партициям (только одно поле, тип=date)
+            "--cluster", "{{cluster}}" # имя кластера в кликхаусе
+        ], # аргументы application
+        py_files=f"{hdfs_person_path}/.auth/creds.py,{hdfs_person_path}/.auth/{args['owner']}.keytab,{hdfs_app_path}/src.zip,{hdfs_app_path}/jobs.zip", # здесь указываем все необходимые файлы (.creds.py и keytab) и zip архив приложения и zip архив с jobs
+        jars=f"{hdfs_app_path}/clickhouse-jdbc-0.3.2-patch11-all.jar", # jar файлы кладем сюда, и указываем их в conf, параметр jars
+        conf={"spark.master": 'yarn', # обязательный
+              "spark.submit.deployMode": 'cluster', # обязательный
+              "spark.yarn.queue": '{{spark_yarn_queue}}', # обязательный
+              "spark.hadoop.hive.metastore.uris": '''thrift://pvlos-sfd000214.cloud.df.sbrf.ru:48101,thrift://pvlos-sfd000238.cloud.df.sbrf.ru:48101''', # обязательный, это адрес MetaStore Hive, без этого параметра не будет видеть MetaStore Hive
+              "spark.pyspark.python": '{{python_exe_path}}', # обязательный, путь к интерпретатору питона для executor, иначе будут ошибки с импортами сторонних библиотек
+              "spark.pyspark.driver.python": '{{python_exe_path}}', # обязательный, путь к интерпретатору питона для driver, иначе будут ошибки с импортами сторонних библиотек
+              "spark.driver.cores": {{spark_driver_cores}}, # кол-во ядер driver, не менять
+              "spark.driver.memory": "{{spark_driver_memory}}", # оператива driver, не менять
+              "spark.executor.cores": {{spark_executor_cores}}, # кол-во ядер на executor, делаешь больше, если нужна выше скорость (вместе с ним менять и параметры spark.default.parallelism и spark.sql.shuffle.partitions)
+              "spark.executor.memory": "{{spark_executor_memory}}", # оператива на executor
+              "spark.executor.instances": {{spark_instances}}, # кол-во executor (executor.cores*executor.instances должно быть меньше 40, для дага на постоянной основе, чтобы не мешать другим коллегам, грузить данные, тк общее кол-во ядер на очереди team_rdwh_reserv =1200)
+              "spark.executor.memoryOverhead": "{{spark_executor_memory_overhead}}", # 20% от executor.memory
+              "spark.driver.memoryOverhead": "{{spark_driver_memory_overhead}}", # 20% от driver.memory
+              "spark.sql.parquet.binaryAsString": "true", # читать тип binary как string
+              "spark.sql.hive.convertMetastoreParquet": "false", # для совместимости типов данных spark и старых версий hive (иначе timestamp поменяет формат)
+              "spark.shuffle.service.enabled": "true", # всегда должен true, для шафл операций между executors
+              "spark.sql.parquet.readLegacyFormat": "true", # для совместимости с legacy версиями parquet
+              "spark.hadoop.validateOutputSpecs": "false", # чтобы не было ошибок, если перезаписываешь какие то данные
+              "spark.hadoop.mapred.input.dir.recursive": "true", # для чтения партицированных таблиц всегда делаем true
+              "spark.sql.catalogImplementation": "hive", # указывать, если работаешь с hive
+              "spark.hadoop.metastore.skip.load.functions.on.init": "true", # true, если НЕ используешь udf из hive (то есть всегда true)
+              "jars": "clickhouse-jdbc-0.3.2-patch11-all.jar", # jar для работы с clickhouse
+              "spark.hadoop.hive.metastore.uris": 'thrift://pvlos-sfd000214.cloud.df.sbrf.ru:48101,thrift://pvlos-sfd000238.cloud.df.sbrf.ru:48101', # ДЛЯ ЧТЕНИЯ ИЗ ПОДПИСКИ: обязательный, это адрес MetaStore Hive, без этого параметра не будет видеть MetaStore Hive
+              "spark.yarn.access.hadoopFileSystems": 'hdfs://hdfsgw', # ДЛЯ ЧТЕНИЯ ИЗ ПОДПИСКИ: без этого параметра будет ошибка кербероса
+              "spark.hadoop.yarn.timeline-service.enabled": "false"
+             },
+        verbose=True # True - вывод подробных логов
+    )
+
+    start = EmptyOperator(task_id="start")
+    finish = EmptyOperator(task_id="finish")
+
+    start >> [spark_job, ] >> finish
+=== ddl_example.sql.txt ===
+CREATE or replace table rrb_ext.{replicated_table} ON CLUSTER 'sh8_r1'
+(
+`rn`                                                         Nullable(Int32)                                                                                       ,
+`product_type_code`                                          Nullable(String)                                                                                    ,
+`appl_spec_flg`                                              Nullable(String)                                                                                    ,
+`flag_pdn_0_50`                                              Nullable(Int32)                                                                                       ,
+`flag_pdn_50_80`                                             Nullable(Int32)                                                                                       ,
+`flag_pdn_80plus`                                            Nullable(Int32)                                                                                       ,
+`flag_5_year`                                                Nullable(Int32)                                                                                       ,
+`flag_on_dt`                                                 Nullable(Int32)                                                                                       ,
+`appl_chanell_sales_name`                                    Nullable(String)                                                                                    ,
+`limit_bucket`                                               Nullable(String)                                                                                    ,
+`ist_doh`                                                    Nullable(String)                                                                                    ,
+`income_data_src_code`                                       Nullable(String)                                                                                    ,
+`terbank_num_pruv`                                           Nullable(String)                                                                                    ,
+`subprod_name`                                               Nullable(String)                                                                                    ,
+`gos_pod_flag`                                               Nullable(String)                                                                                    ,
+`dlq_type`                                                   Nullable(String)                                                                                    ,
+`business_plan_numerator`                                    Nullable(Decimal(38,6))                                                                             ,
+`business_plan_denumerator`                                  Nullable(Decimal(38,4))                                                                             ,
+`recovery_ovr_bucket_91_120_nominator_debt_sale_rub_amt`     Nullable(Decimal(38,4))                                                                             ,
+`recovery_ovr_bucket_121_150_nominator_debt_sale_rub_amt`    Nullable(Decimal(38,4))                                                                             ,
+`recovery_ovr_bucket_151_180_nominator_debt_sale_rub_amt`    Nullable(Decimal(38,4))                                                                             ,
+`recovery_ovr_bucket_181_210_nominator_debt_sale_rub_amt`    Nullable(Decimal(38,4))                                                                             ,
+`recovery_ovr_bucket_211_360_nominator_debt_sale_rub_amt`    Nullable(Decimal(38,4))                                                                             ,
+`recovery_ovr_bucket_361_720_nominator_debt_sale_rub_amt`    Nullable(Decimal(38,4))                                                                             ,
+`recovery_ovr_bucket_721_1110_nominator_debt_sale_rub_amt`   Nullable(Decimal(38,4))                                                                             ,
+`recovery_ovr_bucket_1111_nominator_debt_sale_rub_amt`       Nullable(Decimal(38,4))                                                                             ,
+`recovery_ovr_bucket_91_120_denominator_debt_sale_rub_amt`   Nullable(Decimal(38,4))                                                                             ,
+`recovery_ovr_bucket_121_150_denominator_debt_sale_rub_amt`  Nullable(Decimal(38,4))                                                                             ,
+`recovery_ovr_bucket_151_180_denominator_debt_sale_rub_amt`  Nullable(Decimal(38,4))                                                                             ,
+`recovery_ovr_bucket_181_210_denominator_debt_sale_rub_amt`  Nullable(Decimal(38,4))                                                                             ,
+`recovery_ovr_bucket_211_360_denominator_debt_sale_rub_amt`  Nullable(Decimal(38,4))                                                                             ,
+`recovery_ovr_bucket_361_720_denominator_debt_sale_rub_amt`  Nullable(Decimal(38,4))                                                                             ,
+`recovery_ovr_bucket_721_1110_denominator_debt_sale_rub_amt` Nullable(Decimal(38,4))                                                                             ,
+`recovery_ovr_bucket_1111_denominator_debt_sale_rub_amt`     Nullable(Decimal(38,4))                                                                             ,
+`appl_num2`                                                  Nullable(String)                                                                                    ,
+`flg_KP`                                                     Nullable(String)                                                                                    ,
+`cust_cred_poten_flag2`                                      Nullable(Int16)                                                                                  ,
+`cust_group`                                                 Nullable(String)                                                                                    ,
+`segment_name`                                               Nullable(String)                                                                                    ,
+`appl_cred_type_code`                                        Nullable(String)                                                                                    ,
+`appl_prod_code`                                             Nullable(String)                                                                                    ,
+`appl_subprod_code`                                          Nullable(String)                                                                                    ,
+`appl_tb_code`                                               Nullable(String)                                                                                    ,
+`appl_osb_num`                                               Nullable(String)                                                                                    ,
+`appl_vsp_num`                                               Nullable(String)                                                                                    ,
+`chanell_sales_name`                                         Nullable(String)                                                                                    ,
+`orange_zone_flg`                                            Nullable(String)                                                                                    ,
+`oneclick_flg`                                               Nullable(String)                                                                                    ,
+`prtnr_sid`                                                  Nullable(String)                                                                                    ,
+`prtnr_inn_num`                                              Nullable(String)                                                                                    ,
+`prtnr_name`                                                 Nullable(String)                                                                                    ,
+`cust_birth_dt`                                              Nullable(String)                                                                                    ,
+`purchase_metod_type_code`                                   Nullable(String)                                                                                    ,
+`pos_cred_type_code`                                         Nullable(String)                                                                                    ,
+`epk_id`                                                     Nullable(String)                                                                                    ,
+`region_const`                                               Nullable(String)                                                                                    ,
+`region_temp`                                                Nullable(String)                                                                                    ,
+`appl_equifax_score_val2`                                    Nullable(String)                                                                                    ,
+`bundle_flg`                                                 Nullable(String)                                                                                    ,
+`risk_cost_funding`                                          Nullable(Decimal(18,4))                                                                             ,
+`cust_fps_totalscore_val`                                    Nullable(String)                                                                                    ,
+`riskcost`                                                   Nullable(Decimal(18,4))                                                                             ,
+`duration`                                                   Nullable(Decimal(18,4))                                                                             ,
+`appl_orange_zone_code`                                      Nullable(String)                                                                                    ,
+`dmargin_issued`                                             Nullable(Decimal(18,4))                                                                             ,
+`cc_pd`                                                      Nullable(String)                                                                                    ,
+`cc_rc`                                                      Nullable(String)                                                                                    ,
+`appl_spec_flag`                                             Nullable(Int16)                                                                                  ,
+`appl_risk_cost_pct`                                         Nullable(String)                                                                                    ,
+`appl_duration_qty`                                          Nullable(String)                                                                                    ,
+`cust_calc_income_clip_ccy_amt`                              Nullable(String)                                                                                    ,
+`appl_dt`                                                    Nullable(String)                                                                                    ,
+`appl_dttm`                                                  Nullable(DateTime64(6))                                                                                 ,
+`flg_KA`                                                     Nullable(String)                                                                                    ,
+`appl_tb_name`                                               Nullable(String)                                                                                    ,
+`appl_osb_name`                                              Nullable(String)                                                                                    ,
+`region`                                                     Nullable(String)                                                                                    ,
+`cred_sid`                                                   Nullable(String)                                                                                    ,
+`appl_num`                                                   Nullable(String)                                                                                    ,
+`cred_issue_mon_cnt`                                         Nullable(Int32)                                                                                       ,
+`cred_issue_sum_bucket_code`                                 Nullable(String)                                                                                    ,
+`terbank_num`                                                Nullable(String)                                                                                    ,
+`cred_rate_bucket_code`                                      Nullable(String)                                                                                    ,
+`cred_woff_flag`                                             Nullable(Int32)                                                                                       ,
+`cred_cur_lim_bucket_code`                                   Nullable(String)                                                                                    ,
+`cred_issue_mon_bucket_code`                                 Nullable(String)                                                                                    ,
+`cred_factory_flag`                                          Nullable(Int32)                                                                                       ,
+`cred_term_mon_cnt`                                          Nullable(Int32)                                                                                       ,
+`issue_rub_amt`                                              Nullable(Decimal(18,4))                                                                             ,
+`max_ovr_days_1d_bucket_issue_rub_amt`                       Nullable(Decimal(18,4))                                                                             ,
+`max_ovr_days_30d_bucket_issue_rub_amt`                      Nullable(Decimal(18,4))                                                                             ,
+`max_ovr_days_60d_bucket_issue_rub_amt`                      Nullable(Decimal(18,4))                                                                             ,
+`max_ovr_days_90d_bucket_issue_rub_amt`                      Nullable(Decimal(18,4))                                                                             ,
+`prncp_calc_rub_amt`                                         Nullable(Decimal(18,4))                                                                             ,
+`max_ovr_days_1d_bucket_prncp_calc_rub_amt`                  Nullable(Decimal(18,4))                                                                             ,
+`max_ovr_days_30d_bucket_prncp_calc_rub_amt`                 Nullable(Decimal(18,4))                                                                             ,
+`max_ovr_days_60d_bucket_prncp_calc_rub_amt`                 Nullable(Decimal(18,4))                                                                             ,
+`max_ovr_days_90d_bucket_prncp_calc_rub_amt`                 Nullable(Decimal(18,4))                                                                             ,
+`max_ovr_days_30d_bucket_prncp_rub_amt`                      Nullable(Decimal(18,4))                                                                             ,
+`max_ovr_days_90d_bucket_prncp_rub_amt`                      Nullable(Decimal(18,4))                                                                             ,
+`debt_woff_cur_mon_rub_amt`                                  Nullable(Decimal(18,4))                                                                             ,
+`debt_sale_cur_mon_rub_amt`                                  Nullable(Decimal(18,4))                                                                             ,
+`hazard_denominator_1_rub_amt`                               Nullable(Decimal(18,4))                                                                             ,
+`hazard_numerator_1_rub_amt`                                 Nullable(Decimal(18,4))                                                                             ,
+`hazard_denominator_30_rub_amt`                              Nullable(Decimal(18,4))                                                                             ,
+`hazard_numerator_30_rub_amt`                                Nullable(Decimal(18,4))                                                                             ,
+`hazard_numerator_30_cnt`                                    Nullable(Int32)                                                                                       ,
+`hazard_denominator_30_cnt`                                  Nullable(Int32)                                                                                       ,
+`hazard_numerator_60_rub_amt`                                Nullable(Decimal(18,4))                                                                             ,
+`hazard_denominator_60_rub_amt`                              Nullable(Decimal(18,4))                                                                             ,
+`hazard_numerator_60_cnt`                                    Nullable(Int32)                                                                                       ,
+`hazard_denominator_60_cnt`                                  Nullable(Int32)                                                                                       ,
+`hazard_denominator_90_rub_amt`                              Nullable(Decimal(18,4))                                                                             ,
+`hazard_numerator_90_rub_amt`                                Nullable(Decimal(18,4))                                                                             ,
+`hazard_numerator_90_cnt`                                    Nullable(Int32)                                                                                       ,
+`hazard_denominator_90_cnt`                                  Nullable(Int32)                                                                                       ,
+`hazard_numerator_180_rub_amt`                               Nullable(Decimal(18,4))                                                                             ,
+`hazard_denominator_180_rub_amt`                             Nullable(Decimal(18,4))                                                                             ,
+`hazard_numerator_180_cnt`                                   Nullable(Int32)                                                                                       ,
+`hazard_denominator_180_cnt`                                 Nullable(Int32)                                                                                       ,
+`cur_lim_rub_amt`                                            Nullable(Decimal(18,4))                                                                             ,
+`agr_ulim_rub_amt`                                           Nullable(Decimal(18,4))                                                                             ,
+`debt_woff_cur_year_rub_amt`                                 Nullable(Decimal(18,4))                                                                             ,
+`debt_woff_ever_rub_amt`                                     Nullable(Decimal(18,4))                                                                             ,
+`debt_sale_cur_year_rub_amt`                                 Nullable(Decimal(18,4))                                                                             ,
+`debt_sale_ever_rub_amt`                                     Nullable(Decimal(18,4))                                                                             ,
+`rate_cred_portf_numerator_issue_rub_amt`                    Nullable(Decimal(18,4))                                                                             ,
+`rate_cred_portf_denominator_issue_rub_amt`                  Nullable(Decimal(18,4))                                                                             ,
+`intrst_due_bal_rub_amt`                                     Nullable(Decimal(18,4))                                                                             ,
+`intrst_ovr_bal_rub_amt`                                     Nullable(Decimal(18,4))                                                                             ,
+`inflow_cred_portf_nominator_rub_amt`                        Nullable(Decimal(18,4))                                                                             ,
+`inflow_cred_portf_denominator_rub_amt`                      Nullable(Decimal(18,4))                                                                             ,
+`recovery_cred_portf_nominator_rub_amt`                      Nullable(Decimal(18,4))                                                                             ,
+`recovery_cred_portf_denominator_rub_amt`                    Nullable(Decimal(18,4))                                                                             ,
+`recovery_ovr_bucket_1_30_nominator_debt_sale_rub_amt`       Nullable(Decimal(18,4))                                                                             ,
+`recovery_ovr_bucket_1_30_denominator_debt_sale_rub_amt`     Nullable(Decimal(18,4))                                                                             ,
+`recovery_ovr_bucket_31_60_nominator_debt_sale_rub_amt`      Nullable(Decimal(18,4))                                                                             ,
+`recovery_ovr_bucket_31_60_denominator_debt_sale_rub_amt`    Nullable(Decimal(18,4))                                                                             ,
+`recovery_ovr_bucket_61_90_nominator_debt_sale_rub_amt`      Nullable(Decimal(18,4))                                                                             ,
+`recovery_ovr_bucket_61_90_denominator_debt_sale_rub_amt`    Nullable(Decimal(18,4))                                                                             ,
+`recovery_ovr_bucket_91_nominator_debt_sale_rub_amt`         Nullable(Decimal(18,4))                                                                             ,
+`recovery_ovr_bucket_91_denominator_debt_sale_rub_amt`       Nullable(Decimal(18,4))                                                                             ,
+`securitization_flag`                                        Nullable(Int16)                                                                                  ,
+`securitization_rub_amt`                                     Nullable(Decimal(18,4))                                                                             ,
+`prncp_30d_ago_rub_amt`                                      Nullable(Decimal(18,4))                                                                             ,
+`prncp_90d_ago_rub_amt`                                      Nullable(Decimal(18,4))                                                                             ,
+`rc_prod_cred_portf_nominator_rub_amt`                       Nullable(Decimal(18,4))                                                                             ,
+`rc_prod_cred_portf_denominator_rub_amt`                     Nullable(Decimal(18,4))                                                                             ,
+`first_intrst_rate`                                          Nullable(Decimal(7,4))                                                                              ,
+`cur_intrst_rate`                                            Nullable(Decimal(7,4))                                                                              ,
+`psk_rate`                                                   Nullable(Decimal(7,4))                                                                              ,
+`cred_plan_close_dt`                                         Nullable(String)                                                                                    ,
+`cred_fact_close_dt`                                         Nullable(String)                                                                                    ,
+`agr_id`                                                     Nullable(String)                                                                                    ,
+`agr_digital_part_num`                                       Nullable(String)                                                                                    ,
+`agr_num`                                                    Nullable(String)                                                                                    ,
+`agrret_sid`                                                 Nullable(String)                                                                                    ,
+`agrret_id`                                                  Nullable(String)                                                                                    ,
+`debt_ovr_days_cnt`                                          Nullable(Int32)                                                                                       ,
+`ovr_bucket_ord`                                             Nullable(Int32)                                                                                       ,
+`cred_used_limit_bucket_code`                                Nullable(String)                                                                                    ,
+`debt_woff_prev_mon_dt`                                      Nullable(String)                                                                                    ,
+`prncp_prev_mon_rub_amt`                                     Nullable(Decimal(18,4))                                                                             ,
+`max_ovr_days_on_dt_prev_mon_cnt`                            Nullable(Int32)                                                                                       ,
+`cred_woff_prev_mon_flag`                                    Nullable(Int16)                                                                                  ,
+`debt_ovr_days_prev_mon_cnt`                                 Nullable(Int32)                                                                                       ,
+`ovr_bucket_prev_mon_ord`                                    Nullable(Int32)                                                                                       ,
+`agr_open_mon_prev_mon_cnt`                                  Nullable(Int32)                                                                                       ,
+`d7_from_first_pymnt_more_7d_ovr_nominator_cnt`              Nullable(Int32)                                                                                       ,
+`d7_from_first_pymnt_more_7d_ovr_denominator_cnt`            Nullable(Int32)                                                                                       ,
+`d7_from_first_pymnt_prncp_nominator_rub_amt`                Nullable(Decimal(18,4))                                                                             ,
+`d7_from_first_pymnt_prncp_denominator_rub_amt`              Nullable(Decimal(18,4))                                                                             ,
+`d15_from_first_pymnt_more_15d_ovr_nominator_cnt`            Nullable(Int32)                                                                                       ,
+`d15_from_first_pymnt_more_15d_ovr_denominator_cnt`          Nullable(Int32)                                                                                       ,
+`d15_from_first_pymnt_prncp_nominator_rub_amt`               Nullable(Decimal(18,4))                                                                             ,
+`d15_from_first_pymnt_prncp_denominator_rub_amt`             Nullable(Decimal(18,4))                                                                             ,
+`d30_from_first_pymnt_more_30d_ovr_nominator_cnt`            Nullable(Int32)                                                                                       ,
+`d30_from_first_pymnt_more_30d_ovr_denominator_cnt`          Nullable(Int32)                                                                                       ,
+`d30_from_first_pymnt_prncp_nominator_rub_amt`               Nullable(Decimal(18,4))                                                                             ,
+`d30_from_first_pymnt_prncp_denominator_rub_amt`             Nullable(Decimal(18,4))                                                                             ,
+`mob_3_ovr_30_nominator_cnt`                                 Nullable(Int32)                                                                                       ,
+`mob_3_ovr_30_denominator_cnt`                               Nullable(Int32)                                                                                       ,
+`mob_3_prncp_nominator_rub_amt`                              Nullable(Decimal(18,4))                                                                             ,
+`mob_3_prncp_denominator_rub_amt`                            Nullable(Decimal(18,4))                                                                             ,
+`mob_12_ovr_90_nominator_cnt`                                Nullable(Int32)                                                                                       ,
+`mob_12_ovr_90_denominator_cnt`                              Nullable(Int32)                                                                                       ,
+`mob_12_from_9_pymnt_prncp_nominator_rub_amt`                Nullable(Decimal(18,4))                                                                             ,
+`mob_12_from_9_pymnt_prncp_denominator_rub_amt`              Nullable(Decimal(18,4))                                                                             ,
+`cred_status_name`                                           Nullable(String)                                                                                    ,
+`cred_issue_term_mon_cnt`                                    Nullable(Int32)                                                                                       ,
+`issue_mon_dt`                                               Nullable(String)                                                                                    ,
+`principal_rub_amt`                                          Nullable(Decimal(18,4))                                                                             ,
+`ctl_datechange`                                             Nullable(DateTime64(6))                                                                                 ,
+`ctl_loading`                                                Nullable(Int64)                                                                                    ,
+`ctl_action`                                                 Nullable(String)                                                                                    ,
+`cust_sid`                                                   Nullable(String)                                                                                    ,
+`cred_ovr_30_flag`                                           Nullable(Int16)                                                                                  ,
+`cred_ovr_60_flag`                                           Nullable(Int16)                                                                                  ,
+`cred_ovr_90_flag`                                           Nullable(Int16)                                                                                  ,
+`cred_ovr_ever_30_flag`                                      Nullable(Int16)                                                                                  ,
+`cred_ovr_ever_60_flag`                                      Nullable(Int16)                                                                                  ,
+`cred_ovr_ever_90_flag`                                      Nullable(Int16)                                                                                  ,
+`due_ifrs_prvsn_rub_amt`                                     Nullable(Decimal(18,4))                                                                             ,
+`ovr_ifrs_prvsn_rub_amt`                                     Nullable(Decimal(18,4))                                                                             ,
+`ovr_intrst_ifrs_prvsn_rub_amt`                              Nullable(Decimal(18,4))                                                                             ,
+`intrst_ifrs_prvsn_rub_amt`                                  Nullable(Decimal(18,4))                                                                             ,
+`ulim_ifrs_prvsn_rub_amt`                                    Nullable(Decimal(18,4))                                                                             ,
+`ovr_intrst_prvsn_rub_amt`                                   Nullable(Decimal(18,4))                                                                             ,
+`intrst_prvsn_rub_amt`                                       Nullable(Decimal(18,4))                                                                             ,
+`ovr_prvsn_rub_amt`                                          Nullable(Decimal(18,4))                                                                             ,
+`due_prvsn_rub_amt`                                          Nullable(Decimal(18,4))                                                                             ,
+`ulim_prvsn_rub_amt`                                         Nullable(Decimal(18,4))                                                                             ,
+`appl_cust_gender_code`                                      Nullable(String)                                                                                    ,
+`appl_cust_birth_bucket_code`                                Nullable(String)                                                                                    ,
+`appl_incoming_income_bucket_code`                           Nullable(String)                                                                                    ,
+`appl_debt_load_bucket_code`                                 Nullable(String)                                                                                    ,
+`appl_pti_bucket_code`                                       Nullable(String)                                                                                    ,
+`appl_apprvd_to_reqstd_cred_bucket_code`                     Nullable(String)                                                                                    ,
+`appl_cust_score_bucket_code`                                Nullable(String)                                                                                    ,
+`appl_chanell_sales_code`                                    Nullable(String)                                                                                    ,
+`appl_cust_group_code`                                       Nullable(String)                                                                                    ,
+`appl_region_osb_code`                                       Nullable(String)                                                                                    ,
+`agr_lim_inc_ccy_amt`                                        Nullable(Decimal(18,4))                                                                             ,
+`agr_lim_decr_ccy_amt`                                       Nullable(Decimal(18,4))                                                                             ,
+`cred_cur_rate_bucket_code`                                  Nullable(String)                                                                                    ,
+`cust_cred_poten_flag`                                       Nullable(Int16)                                                                                  ,
+`appl_subprod_dtl_code`                                      Nullable(String)                                                                                    ,
+`mob_12_ever_ovr_90_denominator_cnt`                         Nullable(Int32)                                                                                       ,
+`mob_12_ever_ovr_90_denominator_rub_amt`                     Nullable(Decimal(18,4))                                                                             ,
+`mob_12_ever_ovr_90_nominator_cnt`                           Nullable(Int32)                                                                                       ,
+`mob_12_ever_ovr_90_nominator_rub_amt`                       Nullable(Decimal(18,4))                                                                             ,
+`mob_18_ever_ovr_90_denominator_cnt`                         Nullable(Int32)                                                                                       ,
+`mob_18_ever_ovr_90_denominator_rub_amt`                     Nullable(Decimal(18,4))                                                                             ,
+`mob_18_ever_ovr_90_nominator_cnt`                           Nullable(Int32)                                                                                       ,
+`mob_18_ever_ovr_90_nominator_rub_amt`                       Nullable(Decimal(18,4))                                                                             ,
+`mob_3_ever_ovr_30_denominator_cnt`                          Nullable(Int32)                                                                                       ,
+`mob_3_ever_ovr_30_denominator_rub_amt`                      Nullable(Decimal(18,4))                                                                             ,
+`mob_3_ever_ovr_30_nominator_cnt`                            Nullable(Int32)                                                                                       ,
+`mob_3_ever_ovr_30_nominator_rub_amt`                        Nullable(Decimal(18,4))                                                                             ,
+`mob_6_ever_ovr_60_denominator_cnt`                          Nullable(Int32)                                                                                       ,
+`mob_6_ever_ovr_60_denominator_rub_amt`                      Nullable(Decimal(18,4))                                                                             ,
+`mob_6_ever_ovr_60_nominator_cnt`                            Nullable(Int32)                                                                                       ,
+`mob_6_ever_ovr_60_nominator_rub_amt`                        Nullable(Decimal(18,4))                                                                             ,
+`mob_9_ever_ovr_90_denominator_cnt`                          Nullable(Int32)                                                                                       ,
+`mob_9_ever_ovr_90_denominator_rub_amt`                      Nullable(Decimal(18,4))                                                                             ,
+`mob_9_ever_ovr_90_nominator_cnt`                            Nullable(Int32)                                                                                       ,
+`mob_9_ever_ovr_90_nominator_rub_amt`                        Nullable(Decimal(18,4))                                                                             ,
+`d1_from_first_pymnt_more_1d_ovr_numerator_cnt`              Nullable(Int32)                                                                                       ,
+`d1_from_first_pymnt_more_1d_ovr_denominator_cnt`            Nullable(Int32)                                                                                       ,
+`d1_from_first_pymnt_issue_numerator_rub_amt`                Nullable(Decimal(18,4))                                                                             ,
+`d1_from_first_pymnt_issue_denominator_rub_amt`              Nullable(Decimal(18,4))                                                                             ,
+`d1_from_first_pymnt_prncp_numerator_rub_amt`                Nullable(Decimal(18,4))                                                                             ,
+`d1_from_first_pymnt_prncp_denominator_rub_amt`              Nullable(Decimal(18,4))                                                                             ,
+`d30_from_first_pymnt_issue_numerator_rub_amt`               Nullable(Decimal(18,4))                                                                             ,
+`d30_from_first_pymnt_issue_denominator_rub_amt`             Nullable(Decimal(18,4))                                                                             ,
+`cur_lim_positive_flag`                                      Nullable(Int16)                                                                                  ,
+`avg_debt_due_6m_ccy_amt`                                    Nullable(Decimal(18,4))                                                                             ,
+`agr_min_pymnt_rate`                                         Nullable(Decimal(7,4))                                                                              ,
+`first_use_dt`                                               Nullable(String)                                                                                    ,
+`repaid_intrst_3m_flag`                                      Nullable(Int16)                                                                                  ,
+`repaid_intrst_6m_flag`                                      Nullable(Int16)                                                                                  ,
+`repaid_intrst_12m_flag`                                     Nullable(Int16)                                                                                  ,
+`appl_equifax_score_val`                                     Nullable(String)                                                                                    ,
+`ctl_src_id`                                                 Nullable(String)                                                                                    ,
+`gregor_dt`                                                  String,
+`tech_create_dttm` DateTime64(6) default now64() -- это поле лучше оставить в качестве технического
+)
+    ENGINE = MergeTree()
+        ORDER BY (gregor_dt)
+        PARTITION BY (gregor_dt);
+
+create or replace table rrb_ext.{distributed_table} ON CLUSTER 'sh8_r1' as rrb_ext.{replicated_table}
+    ENGINE = Distributed('sh8_r1', 'rrb_ext', '{replicated_table}',  rand());
+
+-- Рекомендации по ORDER BY:
+-- Поля указанные в ORDER BY не должны содержать null в источнике!!! Иначе загрузка упадёт.
+-- Сначала - указывать поля, по которым чаще всего будете фильтроваться.
+-- Далее первыми должны идти поля по возрастанию кардинальности.
+-- Если таблица небольшая можно указать: ORDER BY tuple()
+
+-- Рекомендации по PARTITION BY:
+-- В приложении удаление партиций при инкрементальной загрузке работает только, если партицированное поле имеет формат даты YYYY-MM-DD (тип может быть String или Date).
+-- Поэтому, если поле не сооветствует этим требованиям, нужно будет заранее вручную почистить эти партиции перед загрузкой.
+-- Историческая загрузка работает все зависимости от поля партицирования.
+
+-- CLUSTER и схему таблицы можно указывать любые
+-- ENGINE можно поменять на ReplicatedMergeTree
+select * from rrb_ext.v_flink_rs_bki_score_data_gp;
+=== ddl_template.sql.template.txt ===
+create or replace table rrb_ext.{{replicated_table}} on cluster '{{cluster}}'
+    (
+    {{columns_types}},
+    `tech_create_dttm` DateTime64(6) default now64()
+    )
+    ENGINE = MergeTree()
+        ORDER BY tuple() -- укажите поля order_by после автогенерации ddl
+        {% if sharding_key_ch %}PARTITION BY {{sharding_key_ch}}{% endif %};
+
+create or replace table rrb_ext.{{distributed_table}} ON CLUSTER '{{cluster}}' as rrb_ext.{{replicated_table}}
+    ENGINE = Distributed('{{cluster}}', 'rrb_ext', '{{replicated_table}}',  rand());
+
+-- Рекомендации по ORDER BY:
+-- Поля указанные в ORDER BY не должны содержать null в источнике!!! Иначе загрузка упадёт.
+-- Сначала - указывать поля, по которым чаще всего будете фильтроваться.
+-- Далее первыми должны идти поля по возрастанию кардинальности.
+-- Если таблица небольшая можно указать: ORDER BY tuple()
+
+-- Рекомендации по PARTITION BY:
+-- В приложении удаление партиций при инкрементальной загрузке работает только, если партицированное поле имеет формат даты YYYY-MM-DD (тип может быть String или Date).
+-- Поэтому, если поле не сооветствует этим требованиям, нужно будет заранее вручную почистить эти партиции перед загрузкой.
+-- Историческая загрузка работает все зависимости от поля партицирования.
+
+-- CLUSTER и схему таблицы можно указывать любые
+-- ENGINE можно поменять на ReplicatedMergeTree
+=== generate_dag.py.txt ===
+import argparse
+import sys
+from pathlib import Path
+from jinja2 import Environment, FileSystemLoader, StrictUndefined
+
+sys.path.append(str(Path(__file__).parent.parent))
+
+from src.dependencies import logger
+
+def main():
+    parser = argparse.ArgumentParser(description='Run T-1 HDFS2CH_RISKZAPROS parsed risk-request Job')
+    parser.add_argument('--hdfs_app_path', type=str, action='store', default=None, required=True, help='hdfs_app_path')
+    parser.add_argument('--hdfs_person_path', type=str, action='store', default=None, required=True, help='hdfs_person_path')
+    parser.add_argument('--owner', type=str, action='store', default=None, required=True, help='owner')
+    parser.add_argument('--dag_id', type=str, action='store', default=None, required=True, help='dag_id')
+    parser.add_argument('--start_date_dag', type=str, action='store', default=None, required=True, help='start_date_dag')
+    parser.add_argument('--schedule_interval', type=str, action='store', default=None, required=True, help='schedule_interval')
+    parser.add_argument('--dagrun_timeout', type=str, action='store', default=None, required=True, help='dagrun_timeout')
+    parser.add_argument('--tags', type=str, action='store', default=None, required=True, help='tags')
+    parser.add_argument('--max_active_runs', type=str, action='store', default=None, required=True, help='max_active_runs')
+    parser.add_argument('--catchup', type=str, action='store', default=None, required=True, help='catchup')
+    parser.add_argument('--task_id', type=str, action='store', default=None, required=True, help='task_id')
+    parser.add_argument('--increment', type=str, action='store', default=None, required=True, help='increment')
+    parser.add_argument('--save_interval', type=str, action='store', default=None, required=True, help='save_interval')
+    parser.add_argument('--start_date', type=str, action='store', default=None, required=True, help='start_date')
+    parser.add_argument('--end_date', type=str, action='store', default=None, required=True, help='end_date')
+    parser.add_argument('--job_name', type=str, action='store', default=None, required=True, help='job_name')
+    parser.add_argument('--schema_ch', type=str, action='store', default=None, required=True, help='schema_ch')
+    parser.add_argument('--distributed_table', type=str, action='store', default=None, required=True, help='distributed_table')
+    parser.add_argument('--replicated_table', type=str, action='store', default=None, required=True, help='replicated_table')
+    parser.add_argument('--schema_hive', type=str, action='store', default=None, required=True, help='schema_hive')
+    parser.add_argument('--hive_table', type=str, action='store', default=None, required=True, help='hive_table')
+    parser.add_argument('--sharding_key_ch', type=str, action='store', default=None, required=True, help='sharding_key_ch')
+    parser.add_argument('--cluster', type=str, action='store', default=None, required=True, help='cluster')
+    parser.add_argument('--python_exe_path', type=str, action='store', default=None, required=True, help='python_exe_path')
+    parser.add_argument('--spark_yarn_queue', type=str, action='store', default=None, required=True, help='spark_yarn_queue')
+    parser.add_argument('--spark_driver_cores', type=str, action='store', default=None, required=True, help='spark_driver_cores')
+    parser.add_argument('--spark_driver_memory', type=str, action='store', default=None, required=True, help='spark_driver_memory')
+    parser.add_argument('--spark_executor_cores', type=str, action='store', default=None, required=True, help='spark_executor_cores')
+    parser.add_argument('--spark_executor_memory', type=str, action='store', default=None, required=True, help='spark_executor_memory')
+    parser.add_argument('--spark_instances', type=str, action='store', default=None, required=True, help='spark_instances')
+    parser.add_argument('--spark_executor_memory_overhead', type=str, action='store', default=None, required=True, help='spark_executor_memory_overhead')
+    parser.add_argument('--spark_driver_memory_overhead', type=str, action='store', default=None, required=True, help='spark_driver_memory_overhead')
+    args = parser.parse_args()
+
+    logger.info(f'Starting Spark application: generating dag dags/{args.distributed_table}.py')
+
+    try:
+        generate_dag(
+            hdfs_app_path=args.hdfs_app_path,
+            hdfs_person_path=args.hdfs_person_path,
+            owner=args.owner,
+            dag_id=args.dag_id,
+            start_date_dag=args.start_date_dag,
+            schedule_interval=args.schedule_interval,
+            dagrun_timeout=args.dagrun_timeout,
+            tags=args.tags,
+            max_active_runs=args.max_active_runs,
+            catchup=args.catchup,
+            task_id=args.task_id,
+            increment=args.increment,
+            save_interval=args.save_interval,
+            start_date=args.start_date,
+            end_date=args.end_date,
+            job_name=args.job_name,
+            schema_ch=args.schema_ch,
+            distributed_table=args.distributed_table,
+            replicated_table=args.replicated_table,
+            schema_hive=args.schema_hive,
+            hive_table=args.hive_table,
+            sharding_key_ch=args.sharding_key_ch,
+            cluster=args.cluster,
+            python_exe_path=args.python_exe_path,
+            spark_yarn_queue=args.spark_yarn_queue,
+            spark_driver_cores=args.spark_driver_cores,
+            spark_driver_memory=args.spark_driver_memory,
+            spark_executor_cores=args.spark_executor_cores,
+            spark_executor_memory=args.spark_executor_memory,
+            spark_instances=args.spark_instances,
+            spark_executor_memory_overhead=args.spark_executor_memory_overhead,
+            spark_driver_memory_overhead=args.spark_driver_memory_overhead
+        )
+
+    except Exception as e:
+        logger.error(f'Exception is: {e} ')
+        logger.info(f'Генерация дага {args.schema_ch}.{args.distributed_table} не выполнилась!')
+
+    return None
+
+def generate_dag(hdfs_app_path, hdfs_person_path, owner, dag_id, start_date_dag, schedule_interval,
+                 dagrun_timeout, tags, max_active_runs, catchup, task_id, increment, save_interval,
+                 start_date, end_date, job_name, schema_ch, distributed_table, replicated_table,
+                 schema_hive, hive_table, sharding_key_ch, cluster, python_exe_path, spark_yarn_queue, spark_driver_cores,
+                 spark_driver_memory, spark_executor_cores, spark_executor_memory,
+                 spark_instances,spark_executor_memory_overhead, spark_driver_memory_overhead):
+    # Формируем контекст для jinja2 для dag_template.py.template clickhouse
+    logger.info(f'Generating dag {schema_ch}.{distributed_table}')
+    context = {
+        "hdfs_app_path": hdfs_app_path,
+        "hdfs_person_path": hdfs_person_path,
+        "owner": owner,
+        "dag_id": dag_id,
+        "start_date_dag": start_date_dag,
+        "schedule_interval": schedule_interval,
+        "dagrun_timeout": dagrun_timeout,
+        "tags": tags,
+        "max_active_runs": max_active_runs,
+        "catchup": catchup,
+        "task_id": task_id,
+        "increment": increment,
+        "save_interval": save_interval,
+        "start_date": start_date,
+        "end_date": end_date,
+        "job_name": job_name,
+        "schema_ch": schema_ch,
+        "distributed_table": distributed_table,
+        "replicated_table": replicated_table,
+        "schema_hive": schema_hive,
+        "hive_table": hive_table,
+        "sharding_key_ch": sharding_key_ch,
+        "cluster": cluster,
+        "python_exe_path": python_exe_path,
+        "spark_yarn_queue": spark_yarn_queue,
+        "spark_driver_cores": spark_driver_cores,
+        "spark_driver_memory": spark_driver_memory,
+        "spark_executor_cores": spark_executor_cores,
+        "spark_executor_memory": spark_executor_memory,
+        "spark_instances": spark_instances,
+        "spark_executor_memory_overhead": spark_executor_memory_overhead,
+        "spark_driver_memory_overhead": spark_driver_memory_overhead
+    }
+
+    print(context)
+
+    # Загружаем шаблон
+    env = Environment(loader=FileSystemLoader('./dags/'), undefined=StrictUndefined)
+
+    # Рендерим и сохраняем
+    logger.info(f'Trying render ddl_template dags/dag_template.py.template')
+    template = env.get_template('dag_template.py.template')
+    output = template.render(**context)
+
+    with open(f'dags/{context["distributed_table"]}.py', 'w', encoding='utf-8') as f:
+        f.write(output)
+    logger.info(f'Downloaded dag dags/{context["distributed_table"]}.py')
+    logger.info(output)
+    logger.info(f'You could copy dag from dags/{context["distributed_table"]}.py or from console')
+    logger.info(f'Bash-operation helps you: cat dags/{distributed_table}.py | iconv -f windows-1251 -t utf-8')
+
+    return
+
+main()
+=== generate_ddl.py.txt ===
+from pyspark.sql import SparkSession
+import argparse
+import sys
+from pathlib import Path
+
+sys.path.append(str(Path(__file__).parent.parent))
+
+from src.shared import create_spark_session
+from src.dependencies import logger
+
+from jinja2 import Environment, FileSystemLoader, StrictUndefined
+
+def main():
+    parser = argparse.ArgumentParser(description='Run T-1 HDFS2CH_RISKZAPROS parsed risk-request Job')
+    parser.add_argument('--schema_ch', type=str, action='store', default=None, required=True,
+                        help='schema_ch')
+    parser.add_argument('--distributed_table', type=str, action='store', default=None, required=True,
+                        help='distributed_table')
+    parser.add_argument('--replicated_table', type=str, action='store', default=None, required=True,
+                        help='replicated_table')
+    parser.add_argument('--schema_hive', type=str, action='store', default=None, required=True,
+                        help='schema_hive')
+    parser.add_argument('--hive_table', type=str, action='store', default=None, required=True,
+                        help='hive_table')
+    parser.add_argument('--sharding_key_ch', type=str, action='store', default=None, required=True,
+                        help='sharding_key_ch')
+    parser.add_argument('--sharding_key_hive', type=str, action='store', default=None, required=False,
+                        help='sharding_key_hive')
+    parser.add_argument('--cluster', type=str, action='store', default=None, required=True,
+                        help='cluster')
+    args = parser.parse_args()
+
+    schema_ch = args.schema_ch
+    distributed_table = args.distributed_table
+    replicated_table = args.replicated_table
+    sharding_key_ch = args.sharding_key_ch
+    schema_hive = args.schema_hive
+    hive_table = args.hive_table
+    cluster = args.cluster
+
+    logger.info(f'Starting Spark application: {schema_ch}.{distributed_table}')
+    spark_session: SparkSession = create_spark_session(f'{schema_ch}.{distributed_table}')
+
+    try:
+        generate_ddl(sc=spark_session,
+                 schema_ch=schema_ch,
+                 distributed_table=distributed_table,
+                 replicated_table=replicated_table,
+                 sharding_key_ch=sharding_key_ch,
+                 schema_hive=schema_hive,
+                 hive_table=hive_table,
+                 cluster=cluster)
+
+    except Exception as e:
+        logger.error(f'Exception is: {e} ')
+    else:
+        logger.info(f'Shutdown Spark application: {schema_ch}.{distributed_table}')
+        spark_session.stop()
+    return None
+
+def generate_ddl(sc, schema_ch, distributed_table, replicated_table, sharding_key_ch, schema_hive, hive_table, cluster):
+    # Формируем контекст для jinja2 для ddl_template clickhouse
+    logger.info(f'Generating ddl {schema_ch}.{distributed_table}')
+    context = {
+        "schema_ch": schema_ch,
+        "distributed_table": distributed_table,
+        "replicated_table": replicated_table,
+        "sharding_key_ch": sharding_key_ch,
+        "schema_hive": schema_hive,
+        "hive_table": hive_table,
+        "cluster": cluster
+    }
+
+    # Получаем имена колонок и их типы
+    df_describe = sc.sql(f'''describe table {schema_hive}.{hive_table} ''').toPandas()
+    # logger.info(f'Result describe hive table {schema_hive}.{hive_table}: {df_describe}')
+
+    # Формируем columns для ddl таблицы в кликхаусе
+    # Получим колонки отдельно от метаинформации о партициях
+    try:
+        target_index = df_describe[df_describe['col_name']=='# Partition Information'].index[0]
+        df_describe_columns = df_describe.iloc[:target_index]
+    except:
+        print("Partitions doesn't exists")
+        df_describe_columns = df_describe.iloc[:] # df колонок без меты
+
+    # Формируем список колонок и их типы для ddl таблицы в clickhouse
+    lst_columns_types = []
+    for _, row in df_describe_columns.iterrows():
+        if row['col_name'] == sharding_key_ch:
+            # Без Nullable
+            lst_columns_types.append(f"`{row['col_name']}` {hive_to_clickhouse_type(hive_type=row['data_type'])} COMMENT '{row['comment']}'")
+        elif row['col_name'] != sharding_key_ch:
+            # Оставляем Nullable
+            lst_columns_types.append(f"`{row['col_name']}` Nullable({hive_to_clickhouse_type(hive_type=row['data_type'])}) COMMENT '{row['comment']}'")
+    columns_types = ',\n'.join(lst_columns_types)
+    context["columns_types"] = columns_types
+
+    logger.info(f'Result columns hive table {schema_hive}.{hive_table}: {context["columns_types"]}')
+
+    # Загружаем шаблон
+    env = Environment(loader=FileSystemLoader('./sql/'), undefined=StrictUndefined)
+
+    # Рендерим и сохраняем
+    logger.info(f'Trying render ddl_template sql/ddl_template.sql.template')
+    template = env.get_template('ddl_template.sql.template')
+    output = template.render(**context)
+
+    with open(f'sql/{context["distributed_table"]}.sql', 'w', encoding='utf-8') as f:
+        f.write(output)
+    logger.info(f'Downloaded ddl sql/{context["distributed_table"]}.sql')
+    logger.info(output)
+    logger.info(f'You could copy ddl from sql/{context["distributed_table"]}.sql or from console :D')
+
+    return
+
+
+def hive_to_clickhouse_type(hive_type: str) -> str:
+    hive_type = hive_type.upper()
+    type_mapping = {
+        "BOOLEAN": "UInt8",
+        "TINYINT": "Int8",
+        "SMALLINT": "Int16",
+        "INT": "Int32",
+        "INTEGER": "Int32",
+        "BIGINT": "Int64",
+        "FLOAT": "Float32",
+        "DOUBLE": "Float64",
+        "DECIMAL": "Decimal",
+        "STRING": "String",
+        "VARCHAR": "String",
+        "CHAR": "FixedString",
+        "BINARY": "String",
+        "DATE": "Date",
+        "TIMESTAMP": "DateTime64(6)",
+        "ARRAY": "Array",
+        "MAP": "Tuple",
+        "STRUCT": "Tuple",
+    }
+
+    # Обработка составных типов (например, DECIMAL(10,2))
+    if "(" in hive_type:
+        base_type = hive_type.split("(")[0].upper()
+        if base_type in type_mapping:
+            return hive_type.replace(base_type, type_mapping[base_type])
+
+    return type_mapping.get(hive_type.upper(), "String")  # fallback to String
+
+main()
+=== generate_ddl.sh.template.txt ===
+#!/bin/bash
+
+START_DTTM=`date '+%Y%m%d%H%M'`
+export PYTHONPATH="${PYTHONPATH}:src"
+
+/usr/sdp/current/spark3-client/bin/spark-submit \
+--name "${SPARK_APP_NAME}" \
+--master yarn \
+--principal ${IPA_USERNAME} \
+--keytab ${KEYTAB_PATH} \
+--deploy-mode client \
+--queue ${SPARK_YARN_QUEUE} \
+--conf spark.pyspark.driver.python="${PYTHON_EXE_PATH}" \
+--conf spark.pyspark.python="${PYTHON_EXE_PATH}" \
+--conf spark.driver.cores=${SPARK_DRIVER_CORES} \
+--conf spark.driver.memory=${SPARK_DRIVER_MEMORY} \
+--conf spark.executor.cores=${SPARK_EXECUTOR_CORES} \
+--conf spark.executor.memory=${SPARK_EXECUTOR_MEMORY} \
+--conf spark.executor.instances=${SPARK_INSTANCES} \
+--conf spark.executor.memoryOverhead=${SPARK_EXECUTOR_MEMORY_OVERHEAD} \
+--conf spark.driver.memoryOverhead=${SPARK_DRIVER_MEMORY_OVERHEAD} \
+--conf spark.sql.parquet.binaryAsString=true \
+--conf spark.sql.hive.convertMetastoreParquet=false \
+--conf spark.shuffle.service.enabled=true \
+--conf spark.sql.parquet.readLegacyFormat=true \
+--conf spark.hadoop.validateOutputSpecs=false \
+--conf spark.hadoop.mapred.input.dir.recursive=true \
+--conf spark.sql.catalogImplementation=hive \
+--conf spark.hadoop.metastore.skip.load.functions.on.init=true \
+--driver-java-options "${LOG4J_CFG}" \
+--jars clickhouse-jdbc-0.3.2-patch11-all.jar \
+toolbox/generate_ddl.py \
+${GENERATE_DDL_ARGS_APP}
+=== generate_ddl.sh.txt ===
+#!/bin/bash
+
+START_DTTM=`date '+%Y%m%d%H%M'`
+export PYTHONPATH=":src"
+
+/usr/sdp/current/spark3-client/bin/spark-submit \
+--name "hive2ch.{START_DTTM}" \
+--master yarn \
+--principal 22343006_omega-sbrf-ru \
+--keytab ~/.auth/22343006_omega-sbrf-ru.keytab \
+--deploy-mode client \
+--queue team_rdwh_reserv \
+--conf spark.pyspark.driver.python="/opt/sdp/mlpy3811v23/bin/python" \
+--conf spark.pyspark.python="/opt/sdp/mlpy3811v23/bin/python" \
+--conf spark.driver.cores=8 \
+--conf spark.driver.memory=20g \
+--conf spark.executor.cores=2 \
+--conf spark.executor.memory=40g \
+--conf spark.executor.instances=5 \
+--conf spark.executor.memoryOverhead=4g \
+--conf spark.driver.memoryOverhead=4g \
+--conf spark.sql.parquet.binaryAsString=true \
+--conf spark.sql.hive.convertMetastoreParquet=false \
+--conf spark.shuffle.service.enabled=true \
+--conf spark.sql.parquet.readLegacyFormat=true \
+--conf spark.hadoop.validateOutputSpecs=false \
+--conf spark.hadoop.mapred.input.dir.recursive=true \
+--conf spark.sql.catalogImplementation=hive \
+--conf spark.hadoop.metastore.skip.load.functions.on.init=true \
+--driver-java-options "-Dlog4j.configuration=file:log4j.properties" \
+--jars clickhouse-jdbc-0.3.2-patch11-all.jar \
+toolbox/generate_ddl.py \
+--schema_ch rrb_ext \
+--distributed_table stg_t_cred_portf_metric_mon \
+--replicated_table stg_t_cred_portf_metric_mon_rrmt \
+--schema_hive arnsdprisk__custom_risk_np_reporting \
+--hive_table t_cred_portf_metric_mon \
+--sharding_key_ch gregor_dt \
+--cluster sh4_r4
+=== job_template.py.template.txt ===
+from pyspark.sql import DataFrame
+from pyspark.sql.functions import *
+
+def transform_data(main_df: DataFrame, sc) -> DataFrame:
+    # Имя функции в джобе должно быть "transform_data". Функция должна возвращать датафрейм.
+    # Если нужен sql: transformed_df = sc.sql('''select * from table ''')
+
+    transformed_df = main_df.select("*")
+    return transformed_df
+=== local_start.sh.template.txt ===
+#!/bin/bash
+
+START_DTTM=`date '+%Y%m%d%H%M'`
+export PYTHONPATH="${PYTHONPATH}:src"
+
+# Для oozie: --keytab 22343006_omega-sbrf-ru.keytab \
+# Для локального запуска: --keytab ~/.auth/22343006_omega-sbrf-ru.keytab \
+
+/usr/sdp/current/spark3-client/bin/spark-submit \
+--name "${SPARK_APP_NAME}" \
+--master yarn \
+--principal ${IPA_USERNAME} \
+--keytab ${KEYTAB_PATH} \
+--deploy-mode client \
+--queue ${SPARK_YARN_QUEUE} \
+--conf spark.pyspark.driver.python="${PYTHON_EXE_PATH}" \
+--conf spark.pyspark.python="${PYTHON_EXE_PATH}" \
+--conf spark.driver.cores=${SPARK_DRIVER_CORES} \
+--conf spark.driver.memory=${SPARK_DRIVER_MEMORY} \
+--conf spark.executor.cores=${SPARK_EXECUTOR_CORES} \
+--conf spark.executor.memory=${SPARK_EXECUTOR_MEMORY} \
+--conf spark.executor.instances=${SPARK_INSTANCES} \
+--conf spark.executor.memoryOverhead=${SPARK_EXECUTOR_MEMORY_OVERHEAD} \
+--conf spark.driver.memoryOverhead=${SPARK_DRIVER_MEMORY_OVERHEAD} \
+--conf spark.sql.parquet.binaryAsString=true \
+--conf spark.sql.hive.convertMetastoreParquet=false \
+--conf spark.shuffle.service.enabled=true \
+--conf spark.sql.parquet.readLegacyFormat=true \
+--conf spark.hadoop.validateOutputSpecs=false \
+--conf spark.hadoop.mapred.input.dir.recursive=true \
+--conf spark.sql.catalogImplementation=hive \
+--conf spark.hadoop.metastore.skip.load.functions.on.init=true \
+--driver-java-options "${LOG4J_CFG}" \
+--jars clickhouse-jdbc-0.3.2-patch11-all.jar \
+--py-files src \
+main.py \
+${ARGS}
+
+# Для справки:
+## Для oozie:
+# "$@"
+
+## Для local:
+#--job_name t_cred_portf_metric_mon_appl_tmp2_load_test \
+#--increment 0 \
+#--schema_ch rrb_ext \
+#--distributed_table t_cred_portf_metric_mon_appl_tmp2_load_test \
+#--replicated_table t_cred_portf_metric_mon_appl_tmp2_mergetree_load_test \
+#--schema_hive t_team_cpu_reporting_rrm \
+#--hive_table t_cred_portf_metric_mon_appl_tmp2 \
+#--sharding_key_ch gregor_dt \
+#--cluster sh8_r1
+
+#--increment 1
+#--save_interval 10
+
+#--increment 2
+#--start_date 2025-01-01
+# --end_date 2025-02-01
+
+#--increment 3 (без дропа партиций)
+#--start_date 2025-01-01
+# --end_date 2025-02-01
+=== local_start.sh.txt ===
+#!/bin/bash
+
+START_DTTM=`date '+%Y%m%d%H%M'`
+export PYTHONPATH=":src"
+
+# Для oozie: --keytab 22343006_omega-sbrf-ru.keytab \
+# Для локального запуска: --keytab ~/.auth/22343006_omega-sbrf-ru.keytab \
+
+/usr/sdp/current/spark3-client/bin/spark-submit \
+--name "hive2ch.{START_DTTM}" \
+--master yarn \
+--principal 22343006_omega-sbrf-ru \
+--keytab ~/.auth/22343006_omega-sbrf-ru.keytab \
+--deploy-mode client \
+--queue team_rdwh_reserv \
+--conf spark.pyspark.driver.python="/opt/sdp/mlpy3811v23/bin/python" \
+--conf spark.pyspark.python="/opt/sdp/mlpy3811v23/bin/python" \
+--conf spark.driver.cores=4 \
+--conf spark.driver.memory=20g \
+--conf spark.executor.cores=4 \
+--conf spark.executor.memory=16g \
+--conf spark.executor.instances=10 \
+--conf spark.executor.memoryOverhead=4g \
+--conf spark.driver.memoryOverhead=5g \
+--conf spark.sql.parquet.binaryAsString=true \
+--conf spark.sql.hive.convertMetastoreParquet=false \
+--conf spark.shuffle.service.enabled=true \
+--conf spark.sql.parquet.readLegacyFormat=true \
+--conf spark.hadoop.validateOutputSpecs=false \
+--conf spark.hadoop.mapred.input.dir.recursive=true \
+--conf spark.sql.catalogImplementation=hive \
+--conf spark.hadoop.metastore.skip.load.functions.on.init=true \
+--driver-java-options "-Dlog4j.configuration=file:log4j.properties" \
+--jars clickhouse-jdbc-0.3.2-patch11-all.jar \
+--py-files src \
+main.py \
+--job_name arnsdprisk__custom_risk_np_reporting_t_report_demand_v2 \
+--increment 1 \
+--save_interval 64 \
+--schema_ch rrb_ext \
+--distributed_table stg_t_report_demand_v2 \
+--replicated_table stg_t_report_demand_rmt_v2 \
+--schema_hive arnsdprisk__custom_risk_np_reporting \
+--hive_table t_report_demand \
+--sharding_key_ch ctl_valid_period \
+--cluster sh4_r4
+
+# Для справки:
+## Для oozie:
+# "$@"
+
+## Для local:
+#--job_name t_cred_portf_metric_mon_appl_tmp2_load_test \
+#--increment 0 \
+#--schema_ch rrb_ext \
+#--distributed_table t_cred_portf_metric_mon_appl_tmp2_load_test \
+#--replicated_table t_cred_portf_metric_mon_appl_tmp2_mergetree_load_test \
+#--schema_hive t_team_cpu_reporting_rrm \
+#--hive_table t_cred_portf_metric_mon_appl_tmp2 \
+#--sharding_key_ch gregor_dt \
+#--cluster sh8_r1
+
+#--increment 1
+#--save_interval 10
+
+#--increment 2
+#--start_date 2025-01-01
+# --end_date 2025-02-01
+
+#--increment 3 (без дропа партиций)
+#--start_date 2025-01-01
+# --end_date 2025-02-01
+=== log4j.properties.txt ===
+# Set everything to be logged to the console
+log4j.rootCategory=WARN, console
+
+# console handler
+log4j.appender.console=org.apache.log4j.ConsoleAppender
+log4j.appender.console.target=System.out
+log4j.appender.console.layout=org.apache.log4j.PatternLayout
+log4j.appender.console.layout.ConversionPattern=%d{yy/MM/dd HH:mm:ss} %p %c{1}: %m%n
+
+# file handler
+#log4j.appender.file=org.apache.log4j.FileAppender
+#log4j.appender.file.File=/home/21540888_omega-sbrf-ru/dev/bki/spark.log
+#log4j.appender.file.layout=org.apache.log4j.PatternLayout
+#log4j.appender.file.layout.ConversionPattern=%d{yy/MM/dd HH:mm:ss} %p %c{1}: %m%n
+
+log4j.logger.org.apache.parquet=ERROR
+log4j.logger.parquet=ERROR
+# Set the log level to WARN for everything
+log4j.logger.org.apache=WARN
+
+log4j.logger.com.hortonworks.spark.atlas=WARN
+
+=== main.py.txt ===
+from pyspark.sql import SparkSession
+import argparse
+import time
+from datetime import date, datetime, timedelta
+
+from src.shared import create_spark_session
+from src.dependencies import CHConfig, logger, ClickhouseRest
+from src.shared import delete_partitions
+from src.perform import Perform
+
+
+def main():
+    parser = argparse.ArgumentParser(description='Run hive2ch Job')
+    parser.add_argument('--job_name', type=str, dest='job_name', action='store', required=True,
+                        help='Job name, that you want to run')
+    # parser.add_argument('--month', type=str, action='append', required=False, help='month partition')
+    parser.add_argument('--start_date', type=str, action='store', default=None, required=False,
+                        help='start date for job')
+    parser.add_argument('--end_date', type=str, action='store', default=None, required=False, help='end date for job')
+    parser.add_argument('--increment', type=str, action='store', default=None, required=True,
+                        help='if =(1 or 2) then increment load, else full load')
+    parser.add_argument('--save_interval', type=str, action='store', default=None, required=False, help='save_interval')
+    parser.add_argument('--schema_ch', type=str, action='store', default=None, required=True,
+                        help='schema_ch')
+    parser.add_argument('--distributed_table', type=str, action='store', default=None, required=True,
+                        help='distributed_table')
+    parser.add_argument('--replicated_table', type=str, action='store', default=None, required=True,
+                        help='replicated_table')
+    parser.add_argument('--schema_hive', type=str, action='store', default=None, required=True,
+                        help='schema_hive')
+    parser.add_argument('--hive_table', type=str, action='store', default=None, required=True,
+                        help='hive_table')
+    parser.add_argument('--sharding_key_ch', type=str, action='store', default=None, required=True,
+                        help='sharding_key_ch')
+    parser.add_argument('--sharding_key_hive', type=str, action='store', default=None, required=False,
+                        help='sharding_key_hive')
+    parser.add_argument('--cluster', type=str, action='store', default=None, required=True,
+                        help='cluster')
+    args = parser.parse_args()
+
+    if int(args.increment) == 3:
+        # ТЕСТОВЫЙ ЗАПУСК БЕЗ УДАЛЕНИЯ ПАРТИЦИЙ инкремент по отрезку времени (start_date и end_date включительно)
+        if args.start_date:
+            start_date_typed: date = datetime.strptime(args.start_date, '%Y-%m-%d').date()
+            if args.end_date:
+                end_date_typed: date = datetime.strptime(args.end_date, '%Y-%m-%d').date()
+            else:
+                end_date_typed: date = datetime.today().date() - timedelta(days=1)
+                logger.info(f'''end_date did not exist, but was calculated as t-1: {end_date_typed}''')
+        else:
+            raise ValueError("start_date or/and end_date doesn't exists")
+
+    elif int(args.increment) == 2:
+        # инкремент по отрезку времени (start_date и end_date включительно)
+        if args.start_date:
+            start_date_typed: date = datetime.strptime(args.start_date, '%Y-%m-%d').date()
+            if args.end_date:
+                end_date_typed: date = datetime.strptime(args.end_date, '%Y-%m-%d').date()
+            else:
+                end_date_typed: date = datetime.today().date() - timedelta(days=1)
+                logger.info(f'''end_date did not exist, but was calculated as t-1: {end_date_typed}''')
+        else:
+            raise ValueError("start_date or/and end_date doesn't exists")
+
+    elif int(args.increment) == 1:
+        # increment t-1 with save_interval (save_interval is calculated from the end_date_typed)
+        if args.save_interval:
+            try:
+                save_interval = int(args.save_interval)
+                if save_interval < 1:
+                    raise ValueError("Incorrect value <save_interval>, acceptable values save_interval >= 1")
+            except:
+                raise ValueError("Incorrect value <save_interval>, acceptable values save_interval >= 1")
+        else:
+            save_interval = 1
+
+        end_date_typed: date = datetime.today().date() - timedelta(days=1)
+        start_date_typed: date = end_date_typed - timedelta(days=save_interval)
+
+
+    elif int(args.increment) == 0:
+        # Full load
+        start_date_typed = None
+        end_date_typed = None
+
+    else:
+        raise ValueError("Incorrect value <increment>, acceptable values [0,1,2,3]")
+
+    job_name = args.job_name
+    schema_ch = args.schema_ch
+    distributed_table = args.distributed_table
+    replicated_table = args.replicated_table
+    database = args.schema_ch
+    config = CHConfig()
+    sharding_key_ch = args.sharding_key_ch
+    schema_hive = args.schema_hive
+    hive_table = args.hive_table
+    sharding_key_hive = args.sharding_key_hive
+    cluster = args.cluster
+    ch_rest = ClickhouseRest(config)
+
+    try:
+        logger.info(f'Starting Spark application: {schema_ch}.{distributed_table}')
+        spark_session: SparkSession = create_spark_session(f'{schema_ch}.{distributed_table}')
+
+        if job_name is not None:
+            if int(args.increment) == 3:
+                logger.info(f'''Test without deleting partitions and truncate table \n''')
+
+            elif int(args.increment) in [1, 2]:
+                delete_partitions(ch_rest=ch_rest,
+                                  cluster=cluster,
+                                  database=database,
+                                  replicated_table=replicated_table,
+                                  start_date=start_date_typed,
+                                  end_date=end_date_typed,
+                                  sharding_key_ch=sharding_key_ch)
+            elif int(args.increment) == 0:
+                logger.info(f'''Truncate table {database}.{replicated_table} on cluster {cluster} \n''')
+                ch_rest.query(f"truncate table {database}.{replicated_table} on cluster {cluster}")
+
+            logger.info(f'Execute job: {job_name}')
+            perform = Perform(
+                job_name=job_name,
+                database=database,
+                distributed_table=distributed_table,
+                replicated_table=replicated_table,
+                spark_session=spark_session,
+                config=config,
+                ch_rest=ch_rest,
+                schema_ch=schema_ch,
+                sharding_key_ch=sharding_key_ch,
+                schema_hive=schema_hive,
+                hive_table=hive_table,
+                sharding_key_hive=sharding_key_hive,
+                cluster=cluster)
+            perform.etl_task(start_date_typed, end_date_typed)
+
+        else:
+            raise ValueError("Incorrect value <job_name>, acceptable values []")
+
+    except Exception as e:
+        logger.error(f'Exception is: {e} ')
+        raise e
+    else:
+        logger.info(f'Shutdown Spark application: {schema_ch}.{distributed_table}')
+        # spark_session.stop()
+    return None
+
+
+if __name__ == "__main__":
+    start = time.time()
+    main()
+    end = time.time()
+    logger.info(f"Spark Application has finished. Time spent: {end - start}")
+=== oozie_start.sh.template.txt ===
+#!/bin/bash
+
+START_DTTM=`date '+%Y%m%d%H%M'`
+export PYTHONPATH="${PYTHONPATH}:src"
+
+# Для oozie: --keytab 22343006_omega-sbrf-ru.keytab \
+# Для локального запуска: --keytab ~/.auth/22343006_omega-sbrf-ru.keytab \
+
+/usr/sdp/current/spark3-client/bin/spark-submit \
+--name "${SPARK_APP_NAME}" \
+--master yarn \
+--principal ${IPA_USERNAME} \
+--keytab ${KEYTAB_PATH} \
+--deploy-mode client \
+--queue ${SPARK_YARN_QUEUE} \
+--conf spark.pyspark.driver.python="${PYTHON_EXE_PATH}" \
+--conf spark.pyspark.python="${PYTHON_EXE_PATH}" \
+--conf spark.driver.cores=${SPARK_DRIVER_CORES} \
+--conf spark.driver.memory=${SPARK_DRIVER_MEMORY} \
+--conf spark.executor.cores=${SPARK_EXECUTOR_CORES} \
+--conf spark.executor.memory=${SPARK_EXECUTOR_MEMORY} \
+--conf spark.executor.instances=${SPARK_INSTANCES} \
+--conf spark.executor.memoryOverhead=${SPARK_EXECUTOR_MEMORY_OVERHEAD} \
+--conf spark.driver.memoryOverhead=${SPARK_DRIVER_MEMORY_OVERHEAD} \
+--conf spark.sql.parquet.binaryAsString=true \
+--conf spark.sql.hive.convertMetastoreParquet=false \
+--conf spark.shuffle.service.enabled=true \
+--conf spark.sql.parquet.readLegacyFormat=true \
+--conf spark.hadoop.validateOutputSpecs=false \
+--conf spark.hadoop.mapred.input.dir.recursive=true \
+--conf spark.sql.catalogImplementation=hive \
+--conf spark.hadoop.metastore.skip.load.functions.on.init=true \
+--driver-java-options "${LOG4J_CFG}" \
+--jars clickhouse-jdbc-0.3.2-patch11-all.jar \
+--py-files src \
+main.py \
+"$@"
+
+# Для справки:
+## Для oozie:
+# "$@"
+
+## Для local:
+#--job_name t_cred_portf_metric_mon_appl_tmp2_load_test \
+#--increment 0 \
+#--schema_ch rrb_ext \
+#--distributed_table t_cred_portf_metric_mon_appl_tmp2_load_test \
+#--replicated_table t_cred_portf_metric_mon_appl_tmp2_mergetree_load_test \
+#--schema_hive t_team_cpu_reporting_rrm \
+#--hive_table t_cred_portf_metric_mon_appl_tmp2 \
+#--sharding_key_ch gregor_dt \
+#--cluster sh8_r1
+
+#--increment 1
+#--save_interval 10
+
+#--increment 2
+#--start_date 2025-01-01
+# --end_date 2025-02-01
+
+#--increment 3 (без дропа партиций)
+#--start_date 2025-01-01
+# --end_date 2025-02-01
+=== perform.py.txt ===
+import importlib
+
+from pyspark.sql import DataFrame
+from src.dependencies import logger
+
+
+class Perform:
+    def __init__(self,
+                 job_name,
+                 database,
+                 distributed_table,
+                 replicated_table,
+                 spark_session,
+                 config,
+                 ch_rest,
+                 schema_ch,
+                 sharding_key_ch,
+                 schema_hive,
+                 hive_table,
+                 sharding_key_hive,
+                 cluster,
+                 ):
+        self.job_name = job_name
+        self.database = database
+        self.distributed_table = distributed_table
+        self.replicated_table = replicated_table
+        self.spark_session = spark_session
+        self.config = config
+        self.ch_rest = ch_rest
+        self.schema_ch = schema_ch
+        self.sharding_key_ch = sharding_key_ch
+        self.schema_hive = schema_hive
+        self.hive_table = hive_table
+        self.sharding_key_hive = sharding_key_hive
+        self.cluster = cluster
+
+    def etl_task(self,start_date, end_date):
+
+        logger.info(f'Extract data from Hive table \n')
+        extract_df = self._extract_data(start_date, end_date)
+
+        logger.info(f'Transform df \n')
+        transformed_data = self._transform_data(extract_df)
+
+        logger.info(f'Load data to clickhouse table \n')
+        self._load_data(transformed_data)
+
+        return
+
+    def _extract_data(self, start_date, end_date):
+
+        if start_date:
+            if end_date:
+                main_df = self.spark_session.read \
+                    .table(f"{self.schema_hive}.{self.hive_table}") \
+                    .filter(f"{self.sharding_key_ch} >= '{start_date}' and {self.sharding_key_ch} <= '{end_date}'")
+                return main_df
+
+            main_df = self.spark_session.read \
+                .table(f"{self.schema_hive}.{self.hive_table}") \
+                .filter(f"{self.sharding_key_ch} >= '{start_date}'")
+            return main_df
+
+        main_df = self.spark_session.read \
+            .table(f"{self.schema_hive}.{self.hive_table}")
+        return main_df
+
+    def _transform_data(self, main_df: DataFrame) -> DataFrame:
+        logger.info(f'Transform from jobs.{self.job_name}')
+        job_module = importlib.import_module(f'jobs.{self.job_name}')
+        transformed_df = job_module.transform_data(main_df=main_df, sc=self.spark_session)
+        return transformed_df
+
+    def _load_data(self, df: DataFrame):
+        logger.info(f'Loading dataframe to table {self.database}.{self.distributed_table}')
+        try:
+            df.write \
+                .mode('append') \
+                .option('dbtable', f'{self.database}.{self.distributed_table}') \
+                .option('isolationLevel', 'NONE') \
+                .option('batchsize', '100000') \
+                .option('numPartitions', '10000') \
+                .jdbc(url=self.config.jdbc_url(),
+                      table=f'{self.database}.{self.distributed_table}',
+                      properties=self.config.properties())
+        except ConnectionError as e:
+            logger.error('Error happend')
+        else:
+            logger.info(f'DataFrame was successfully loaded.\n')
+            return df.explain()
+=== pull_project.py.txt ===
+import paramiko
+
+host = "pplas-ldbr00412.sdpdi.df.sbrf.ru" # Замените на ваш сервер
+user = "22343006_omega-sbrf-ru" # Замените на ваше имя пользователя
+password = "$$" # Замените на ваш пароль
+command = "cd dev/util_hive2ch;source generate_ddl.sh" # Команда для выполнения на сервере
+filename = 'wf_rdwh_hive_to_ch__template_dag_v10.py'
+
+ssh = paramiko.SSHClient()
+ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+remote_file_path = f'oozie-app/oozie-app/util_hive2ch' # в пути нельзя использовать тильду
+local_file_path = 'file.txt'
+
+ssh.connect(host, username=user, password=password)
+
+sftp = ssh.open_sftp()
+sftp.get(remote_file_path, local_file_path)
+sftp.close()
+
+# try:
+#     ssh.connect(host, username=user, password=password)
+#     stdin, stdout, stderr = ssh.exec_command(command)
+#     output = stdout.read().decode()
+#     error = stderr.read().decode()
+#     if output:
+#         print("Результат выполнения команды:")
+#         print(output)
+#     if error:
+#         print("Ошибка:")
+#         print(error)
+# except Exception as e:
+#     print(f"Ошибка подключения: {e}")
+# finally:
+#     ssh.close()
+
+=== README.md.txt ===
+# Утилита для автоматизации репликации из hive в clickhouse с поддержкой инкрементальной загрузки по дате
+
+## Как пользоваться инструкцией:
+
+План инструкции:
+
+1. Пререквизиты:
+   - необходимо убедиться, что все необходимые доступы у вас есть
+2. Установка:
+   - Настройка подключения к удаленной linux-ноде из Pycharm ВАРМа
+   - Настройка Browse Remote Host для просмотра файлов на linux-ноде, находясь в ВАРМе
+   - Клонирование репозитория на linux-ноду и переход в корень приложения
+3. Настройка параметров приложения:
+   - ОБЩИЕ ПАРАМЕТРЫ
+   - ПАРАМЕТРЫ ПРИЛОЖЕНИЯ (для справки по параметрам приложения обратитесь к разделу 5. СПРАВКА: Параметры приложения)
+   - ПАРАМЕТРЫ SPARK SESSION
+4. Сделайте кейтаб. Дальше в зависимости от того, хотите вы запускать приложение ЛОКАЛЬНО, через CTL OOZIE или через AIRFLOW, переходите в соответствующий раздел:
+
+   4.1. Локальный запуск приложения на linux-ноде
+
+   4.2. Ставим приложение на рассписание с помощью OOZIE в CTL
+
+   4.3. Как поставить приложение на рассписание в airflow с помощью SparkSubmitOperator
+5. СПРАВКА: Параметры приложения
+6. Справочная информация для debugging
+
+### Пошаговая схема:
+
+Цветовая палитра схемы:
+- Серый - выполняется в консоли Linux
+- Красный - ручное редактирование
+- Синий - действия в UI приложений
+
+![img35.png](docs/img35.png)
+
+
+## 1. Пререквизиты
+1. доступ к linux-ноде с доступом к КП (hdfs)
+2. доступ к командное пространство (hdfs)
+3. доступ к airflowSE
+4. доступ к ЛД Clickhouse
+5. доступ к командной папке в hdfs (где вы будете хранить это приложение)
+
+## 2. Установка
+### Настраиваем подключение к удаленной linux-ноде в Pycharm. На неё будем клонировать приложение. А также настраиваем Remote Browser Host для просмотра файлов на linux-ноде
+1. Help->Find Action
+
+![img17.png](docs/img17.png)
+
+2. Вводим в поле поиска "ssh configurations"
+
+![img18.png](docs/img18.png)
+
+3. Заполняем поля по примеру и жмём Apply:
+
+Можете использовать этот хост или свой:
+```bash
+Host: pplas-ldbr00412.sdpdi.df.sbrf.ru
+```
+
+![img19.png](docs/img19.png)
+
+4. Tools->Deployment->Configuration...
+
+![img22.png](docs/img22.png)
+
+5. Жмём "+", вводим название конфигурации. Далее создаем конфигурацию для Deployment, выбрав вашу конфигурацию SSH и указав Root path:
+
+![img24.png](docs/img24.png)
+
+6. Открываете Browse Remote Host:
+
+![img25.png](docs/img25.png)
+
+7. Tools->Start SSH Session... и выбираете ваше подключение
+
+![img20.png](docs/img20.png)
+
+8. В терминале вы подключились к удаленной linux-ноде
+
+![img21.png](docs/img21.png)
+
+### Клонируем репозиторий и переходим в папку проекта
+1. В терминале linux-ноды клонируем репозиторий
+```bash
+git clone https://df-bitbucket.ca.sbrf.ru/scm/llrr/ld-sdp-etl.git
+```
+2. Переходим в репозиторий
+```bash
+cd util_hive2ch
+```
+3. В окне Browse Remote Host нажмите кнопку Refresh, чтобы увидеть обновленные файлы с linux-ноды.
+Перейдите к корню приложения:
+
+![img33.png](docs/img33.png)
+
+## 3. Настройка параметров приложения
+В данном разделе редактируются параметры только в файле common.env.
+После того, как измените файл common.env в Browser Remote Host необходимо нажать на кнопку загрузки на хост (правый верхний угол).
+
+![img27.png](docs/img27.png)
+
+1. В common.env заполнить "ОБЩИЕ ПАРАМЕТРЫ":
+
+![img9.png](docs/img9.png)
+
+2. Затем заполнить "ПАРАМЕТРЫ ПРИЛОЖЕНИЯ"
+
+    (Если у вас возникают вопросы как заполнить параметры, обратитесь к разделу инструкции "СПРАВКА: Параметры приложения", можно оставить как есть для тестового запуска)
+
+![img12.png](docs/img12.png)
+
+3. Заполнить переменные "ПАРАМЕТРЫ SPARK SESSION" (можно оставить как есть для тестового запуска):
+
+![img26.png](docs/img26.png)
+
+## 4. Сделайте кейтаб. Дальше в зависимости от того, хотите вы запускать приложение ЛОКАЛЬНО, через CTL OOZIE или через AIRFLOW, переходите в соответствующий раздел:
+
+0. Сделайте keytab в папке ~/.auth/
+```bash
+make keytab_init
+```
+### 4.1 Локальный запуск приложения на linux-ноде
+
+1. Выполнить команду:
+```bash
+make project_local-build
+```
+В результаты выполнения этой команды появляется следующие файлы:
+  - Файл для локального запуска приложения:
+    - local_start.sh
+  - Файл ddl:
+    - sql/{CH_DISTRIBUTED_TABLE}.sql
+  - Файл jobs:
+    - sql/{JOB_NAME}.py
+  - [НЕ МЕНЯТЬ] Технические файлы:
+    - creds.py
+    - toolbox/generate_ddl.sh
+2. Обновите файлы в Browse Remote Host
+3. Откройте сгенерированный sql/{CH_DISTRIBUTED_TABLE}.sql:
+   - Проверьте его и отредактируйте ORDER BY и PARTITION BY у таблицы MergeTree, следуя рекомендациям из файла.
+   - Создайте две таблицы: MergeTree и Distributed из этого файла.
+
+4. Чтобы запустить загрузку из Hive в Clickhouse, выполните:
+```bash
+make local_start
+```
+
+5. Если увидите в консоли такие логи, то всё работает:
+
+![img.png](docs/img.png)
+
+Готово! Вы справились с **локальным** запуском приложения!
+Чтобы остановить загрузку, нажмите `ctrl+C`
+
+### 4.2 Ставим приложение на рассписание с помощью OOZIE в CTL:
+1. В файле common.env заполнить параметры:
+![img28.png](docs/img28.png)
+
+2. Подготовить файлы приложение для oozie:
+
+```bash
+make project_oozie-build
+```
+
+3. Загрузить необходимые файлы в hdfs:
+
+```bash
+make project_load_oozie
+```
+
+В папке HDFS_APP_OOZIE_PATH появится файлы приложения необходимые для запуска потока oozie через CTL:
+
+![img8.png](docs/img8.png)
+
+4. Далее заходим в CTL и создаем CTL поток с параметрами:
+
+![img7.png](docs/img7.png)
+
+Готово! Можно запускать поток.
+
+
+### 4.3 Как поставить приложение на рассписание в airflow с помощью SparkSubmitOperator:
+1. Заполнить параметры:
+![img16.png](docs/img16.png)
+
+2. Подготовить файлы приложение для airflow:
+
+```bash
+make project_airflow-build
+```
+
+3. Загрузить файлы в hdfs:
+
+```bash
+make project_load_airflow
+```
+
+Эта команда сформирует необходимые файлы в hdfs по пути HDFS_APP_AIRFLOW_PATH, в том числе создаст DAG для airflow под ваши параметры.
+
+![img30.png](docs/img30.png)
+
+
+4. Откройте файл DAG по пути dags/{distributed_table}.py.
+
+Этот даг нужно будет закинуть в AIRFLOW:
+
+![img29.png](docs/img29.png)
+
+Ссылка на Code Editor SE:
+```https://airflow-webserver-ci04459811-airflow-app-os.apps.prom-terra000166-ias.ocp.ca.sbrf.ru/code_editor/#/files/```
+
+Готово! можно запускать ваш DAG в AIRFLOW!
+
+## 5. СПРАВКА: Параметры приложения:
+Описание всех параметров приложения (чтобы знать как их сочетать, смотри след. подраздел "Комбинации параметров приложения").
+
+Параметры указаны в формате:
+
+```{параметр} [список возможных значений] - пояснение```
+
+- increment [0,1,2,3] - режим загрузки данных (в качестве поля инкремента используется поле-партицирования из параметра sharding_key_ch):
+  - 0 - историческая (с предварительным truncate таблицы в кликхаусе)
+  - 1 - инкрементальная с save_interval (загрузка данных по отрезку времени [datetime.today() - save_interval,datetime.today()], с автоматической предварительной очисткой данных на этом отрезке)
+  - 2 - инкрементальная загрузка по отрезку времени [start_date, end_date] с автоматической предварительной очисткой данных на этом отрезке
+  - 3 - инкрементальная загрузка по отрезку времени [start_date, end_date] без автоматической предварительной очистки данных на этом отрезке
+
+- cluster [sh8_r1] - имя логического кластера в кликхаусе
+- schema_ch [rrb_ext] - схема таблицы в кликхаусе
+- distributed_table [t_cred_portf_metric_mon_appl_tmp2_load_test] - имя distributed таблицы в кликхаусе, сюда будут грузиться данные
+- replicated_table [t_cred_portf_metric_mon_appl_tmp2_mergetree_load_test] - имя mergetree таблицы, над которой построена distributed, необходимой для дропа партиций при increment =1 или =2
+- sharding_key_ch [gregor_dt] - поддерживается только тип date, иначе не будут дропаться партиции, но данные грузиться в кликхаус из hive будут
+- schema_hive [t_team_cpu_reporting_rrm] - схема источника данных в hive
+- hive_table [t_cred_portf_metric_mon_appl_tmp2] - имя таблицы в hive
+
+### Комбинации параметров приложения:
+Параметры указываются в Makefile, для последующей генерации файла main_local_start.sh:
+
+- (increment=0) для исторической загрузки:
+```bash
+INCREMENT='0'
+JOB_NAME='t_cred_portf_metric_mon_appl_tmp2_load_test'
+CH_SCHEMA='rrb_ext'
+CH_DISTRIBUTED_TABLE='t_cred_portf_metric_mon_appl_tmp2_load_test'
+CH_MERGETREE_TABLE='t_cred_portf_metric_mon_appl_tmp2_mergetree_load_test'
+HIVE_SCHEMA='t_team_cpu_reporting_rrm'
+HIVE_TABLE='t_cred_portf_metric_mon_appl_tmp2'
+CH_PARTITION_BY_FIELD='gregor_dt'
+CH_CLUSTER='sh8_r1'
+```
+
+-  (increment=1)для инкрементальной загрузки с save_interval:
+```bash
+INCREMENT='1'
+SAVE_INTERVAL='5'
+JOB_NAME='t_cred_portf_metric_mon_appl_tmp2_load_test'
+CH_SCHEMA='rrb_ext'
+CH_DISTRIBUTED_TABLE='t_cred_portf_metric_mon_appl_tmp2_load_test'
+CH_MERGETREE_TABLE='t_cred_portf_metric_mon_appl_tmp2_mergetree_load_test'
+HIVE_SCHEMA='t_team_cpu_reporting_rrm'
+HIVE_TABLE='t_cred_portf_metric_mon_appl_tmp2'
+CH_PARTITION_BY_FIELD='gregor_dt'
+CH_CLUSTER='sh8_r1'
+```
+
+- (increment=2) для инкрементальной загрузки по отрезку времени [start_date, end_date]:
+```bash
+INCREMENT='2'
+START_DATE='2025-05-05'
+END_DATE='2025-05-05'
+JOB_NAME='t_cred_portf_metric_mon_appl_tmp2_load_test'
+CH_SCHEMA='rrb_ext'
+CH_DISTRIBUTED_TABLE='t_cred_portf_metric_mon_appl_tmp2_load_test'
+CH_MERGETREE_TABLE='t_cred_portf_metric_mon_appl_tmp2_mergetree_load_test'
+HIVE_SCHEMA='t_team_cpu_reporting_rrm'
+HIVE_TABLE='t_cred_portf_metric_mon_appl_tmp2'
+CH_PARTITION_BY_FIELD='gregor_dt'
+CH_CLUSTER='sh8_r1'
+```
+
+- (increment='3') для инкрементальной загрузки по отрезку времени [start_date, end_date], без предварительной очистки партиций:
+```bash
+INCREMENT='3'
+START_DATE='2025-05-05'
+END_DATE='2025-05-05'
+JOB_NAME='t_cred_portf_metric_mon_appl_tmp2_load_test'
+CH_SCHEMA='rrb_ext'
+CH_DISTRIBUTED_TABLE='t_cred_portf_metric_mon_appl_tmp2_load_test'
+CH_MERGETREE_TABLE='t_cred_portf_metric_mon_appl_tmp2_mergetree_load_test'
+HIVE_SCHEMA='t_team_cpu_reporting_rrm'
+HIVE_TABLE='t_cred_portf_metric_mon_appl_tmp2'
+CH_PARTITION_BY_FIELD='gregor_dt'
+CH_CLUSTER='sh8_r1'
+```
+
+## 6. Справочная информация для debugging
+1. Чтобы посмотреть логи запущенного приложения в AIRFLOW, открываем вкладку logs конкретной таски и ищем синюю ссылку.
+
+![img2.png](docs/img2.png)
+
+2. Переходим и жмем внизу кнопку logs.
+
+![img3.png](docs/img3.png)
+
+3. Затем stdout.
+
+![img4.png](docs/img4.png)
+
+4. Это логи на кокретной ноде-координаторе, где запустилось ваше приложение.
+
+5. Если вам нужно выключить загрузку, то необходимо остановить даг Mark state as... -> Failed.
+Затем два варианта
+   1. перейти по синей ссылке в логах в SparkUI и нажать на kill каждой Spark таске.
+   2. в hue перейти во вкладку jobs, выбрать вашу джобу и нажать кнопку kill.
+
+
+=== tech.env.template.txt ===
+#   [НЕ МЕНЯТЬ] ТЕХНИЧЕСКИЕ ПЕРЕМЕННЫЕ
+##  [НЕ МЕНЯТЬ] ГЛОБАЛЬНЫЕ ПАРАМЕТРЫ
+HDFS_PERSON_PATH='hdfs://arnsdpldbr2/user/${IPA_USERNAME}'
+HDFS_APP_AIRFLOW_PATH='${HDFS_APP_AIRFLOW_DIR}/${JOB_NAME}'
+HDFS_APP_OOZIE_PATH='${HDFS_APP_OOZIE_DIR}/${JOB_NAME}'
+ROOT_PATH='../util_hive2ch'
+LINUX_LOCAL_PATH_KEYTAB='~/.auth/${IPA_USERNAME}.keytab'
+PYTHON_EXE_PATH='/opt/sdp/mlpy3811v23/bin/python'
+LOG4J_CFG='-Dlog4j.configuration=file:log4j.properties'
+##  [НЕ МЕНЯТЬ] AIRFLOW
+AIRFLOW_HDFS_PATH_KEYTAB='~/.auth/${IPA_USERNAME}.keytab'
+AIRFLOW_CONTAINER_PATH_KEYTAB='${IPA_USERNAME}.keytab'
+##  [НЕ МЕНЯТЬ] OOZIE
+OOZIE_HDFS_PATH_KEYTAB='~/.auth/${IPA_USERNAME}.keytab'
+OOZIE_CONTAINER_PATH_KEYTAB='${IPA_USERNAME}.keytab'
+OOZIE_ARGS_APP='$@'
+=== tech.env.txt ===
+#   [НЕ МЕНЯТЬ] ТЕХНИЧЕСКИЕ ПЕРЕМЕННЫЕ
+##  [НЕ МЕНЯТЬ] ГЛОБАЛЬНЫЕ ПАРАМЕТРЫ
+HDFS_PERSON_PATH='hdfs://arnsdpldbr2/user/22343006_omega-sbrf-ru'
+HDFS_APP_AIRFLOW_PATH='hdfs://arnsdpldbr2/user/team/team_transformation_analytical/oozie-app/t_cred_portf_metric_mon'
+HDFS_APP_OOZIE_PATH='hdfs://arnsdpldbr2/user/team/team_transformation_analytical/oozie-app/t_cred_portf_metric_mon'
+ROOT_PATH='../util_hive2ch'
+LINUX_LOCAL_PATH_KEYTAB='~/.auth/22343006_omega-sbrf-ru.keytab'
+PYTHON_EXE_PATH='/opt/sdp/mlpy3811v23/bin/python'
+LOG4J_CFG='-Dlog4j.configuration=file:log4j.properties'
+##  [НЕ МЕНЯТЬ] AIRFLOW
+AIRFLOW_HDFS_PATH_KEYTAB='~/.auth/22343006_omega-sbrf-ru.keytab'
+AIRFLOW_CONTAINER_PATH_KEYTAB='22343006_omega-sbrf-ru.keytab'
+##  [НЕ МЕНЯТЬ] OOZIE
+OOZIE_HDFS_PATH_KEYTAB='~/.auth/22343006_omega-sbrf-ru.keytab'
+OOZIE_CONTAINER_PATH_KEYTAB='22343006_omega-sbrf-ru.keytab'
+OOZIE_ARGS_APP='$@'
+=== workflow.xml.txt ===
+<workflow-app name="hive2ch_app" xmlns="uri:oozie:workflow:0.4">
+  <global>
+    <configuration>
+    <property>
+      <name>mapreduce.job.queuename</name>
+      <value>team_rdwh_default</value>
+    </property>
+    </configuration>
+  </global>
+  <start to="hive2ch_action"/>
+  <action name="hive2ch_action">
+    <shell xmlns="uri:oozie:shell-action:0.3">
+      <job-tracker>${jobTracker}</job-tracker>
+      <name-node>${nameNode}</name-node>
+      <exec>oozie_start.sh</exec>
+      <argument>--job_name=${job_name}</argument>
+      <argument>--cluster=${cluster}</argument>
+      <argument>--schema_ch=${schema_ch}</argument>
+      <argument>--distributed_table=${distributed_table}</argument>
+      <argument>--replicated_table=${replicated_table}</argument>
+      <argument>--sharding_key_ch=${sharding_key_ch}</argument>
+      <argument>--schema_hive=${schema_hive}</argument>
+      <argument>--hive_table=${hive_table}</argument>
+      <argument>--sharding_key_hive=${firstNotNull(wf:conf('sharding_key_hive'), null)}</argument>
+      <argument>--increment=${increment}</argument>
+      <argument>--start_date=${firstNotNull(wf:conf('start_date'), null)}</argument>
+      <argument>--end_date=${firstNotNull(wf:conf('end_date'), null)}</argument>
+      <argument>--save_interval=${firstNotNull(wf:conf('save_interval'), null)}</argument>
+      <file>../oozie_start.sh#oozie_start.sh</file>
+      <file>../clickhouse-jdbc-0.3.2-patch11-all.jar</file>
+      <file>../src#src</file>
+      <file>../jobs#jobs</file>
+      <file>../main.py#main.py</file>
+      <file>/user/${wf:user()}/.auth/creds.py#creds.py</file>
+      <file>/user/${wf:user()}/.auth/${wf:user()}.keytab#${wf:user()}.keytab</file>
+      <file>../log4j.properties#log4j.properties</file>
+    </shell>
+    <ok to="end"/>
+    <error to="kill"/>
+  </action>
+  <kill name="kill">
+    <message>Actionfailed,errormessage[${wf:errorMessage(wf:lastErrorNode())}]</message>
+  </kill>
+  <end name="end"/>
+</workflow-app>

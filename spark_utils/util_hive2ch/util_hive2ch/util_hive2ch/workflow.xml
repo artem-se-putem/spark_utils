@@ -1,0 +1,45 @@
+<workflow-app name="hive2ch_app" xmlns="uri:oozie:workflow:0.4">
+    <global>
+        <configuration>
+            <property>
+                <name>mapreduce.job.queuename</name>
+                <value>team_rdwh_default</value>
+            </property>
+        </configuration>
+    </global>
+    <start to="hive2ch_action"/>
+    <action name="hive2ch_action">
+        <shell xmlns="uri:oozie:shell-action:0.3">
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <exec>oozie_start.sh</exec>
+            <argument>--job_name=${job_name}</argument>
+            <argument>--cluster=${cluster}</argument>
+            <argument>--schema_ch=${schema_ch}</argument>
+            <argument>--distributed_table=${distributed_table}</argument>
+            <argument>--replicated_table=${replicated_table}</argument>
+            <argument>--sharding_key_ch=${sharding_key_ch}</argument>
+            <argument>--schema_hive=${schema_hive}</argument>
+            <argument>--hive_table=${hive_table}</argument>
+            <argument>--sharding_key_hive=${firstNotNull(wf:conf('sharding_key_hive'), null)}</argument>
+            <argument>--increment=${increment}</argument>
+            <argument>--start_date=${firstNotNull(wf:conf('start_date'), null)}</argument>
+            <argument>--end_date=${firstNotNull(wf:conf('end_date'), null)}</argument>
+            <argument>--save_interval=${firstNotNull(wf:conf('save_interval'), null)}</argument>
+            <file>../oozie_start.sh#oozie_start.sh</file>
+            <file>../clickhouse-jdbc-0.3.2-patch11-all.jar</file>
+            <file>../src#src</file>
+            <file>../jobs#jobs</file>
+            <file>../main.py#main.py</file>
+            <file>/user/${wf:user()}/.auth/creds.py#creds.py</file>
+            <file>/user/${wf:user()}/.auth/${wf:user()}.keytab#${wf:user()}.keytab</file>
+            <file>../log4j.properties#log4j.properties</file>
+        </shell>
+        <ok to="end"/>
+        <error to="kill"/>
+    </action>
+    <kill name="kill">
+        <message>Actionfailed,errormessage[${wf:errorMessage(wf:lastErrorNode())}]</message>
+    </kill>
+    <end name="end"/>
+</workflow-app>
