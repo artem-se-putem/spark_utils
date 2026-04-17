@@ -1,5 +1,6 @@
 import time
 from utils.parser import parse_arguments
+from src.dependencies import logger, logger_debug, CHConfig, ClickhouseRest
 
 
 def main():

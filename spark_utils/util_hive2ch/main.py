@@ -4,7 +4,7 @@ import time
 from datetime import date, datetime, timedelta
 
 from src.shared import create_spark_session
-from src.dependencies import CHConfig, logger, ClickhouseRest
+from src.dependencies import CHConfig, ClickhouseRest
 from src.shared import delete_partitions
 from src.perform import Perform
 
