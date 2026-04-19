@@ -88,4 +88,3 @@ class Perform:
         else:
             logger.info(f'DataFrame was successfully loaded.\n')
             return df.explain()
-===

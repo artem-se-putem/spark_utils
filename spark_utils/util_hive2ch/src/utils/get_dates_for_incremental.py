@@ -1,7 +1,8 @@
 from typing import Optional, Tuple
 from datetime import date, datetime, timedelta
+from src.dependencies import logger
 
-def calculate_dates(args, increment: int) -> Tuple[Optional[date], Optional[date]]:
+def get_dates_for_incremental(args, increment: int) -> Tuple[date, date]:
     """
     Расчет дат для загрузки данных
 
@@ -13,12 +14,8 @@ def calculate_dates(args, increment: int) -> Tuple[Optional[date], Optional[date
         Tuple[Optional[date], Optional[date]]: (start_date, end_date)
         Для полной загрузки (increment=0) возвращает (None, None)
     """
-    if increment == 0:
-        # Полная загрузка - даты не нужны
-        logger.info("Режим полной загрузки (без фильтрации по датам)")
-        return None, None
 
-    elif increment == 1:
+    if increment == 1:
         # Инкремент с save_interval
         end_date_typed: date = datetime.today().date() - timedelta(days=1)
         start_date_typed: date = end_date_typed - timedelta(days=args.save_interval)

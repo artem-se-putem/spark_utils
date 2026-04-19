@@ -104,7 +104,7 @@ def parse_arguments():
 
     parser.add_argument(
         '--save_interval',
-        type=int,  # Сразу как int!
+        type=int,
         default=1,
         help='Интервал сохранения в днях для increment=1 (по умолчанию: 1)'
     )
@@ -120,7 +120,10 @@ def parse_arguments():
     args = parser.parse_args()
 
     # Дополнительная валидация
-    if args.increment in [2, 3]:
+    if args.increment not in [0, 1, 2, 3]:
+        raise ValueError(f"Incorrect increment: {args.increment}")
+    
+    elif args.increment in [2, 3]:
         if not args.start_date:
             parser.error("Для increment=2 или 3 необходимо указать --start_date")
 
